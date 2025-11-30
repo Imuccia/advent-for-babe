@@ -35,6 +35,28 @@ body {
     box-sizing: border-box;
 }
 
+body,
+button,
+a,
+input,
+select,
+textarea,
+.day,
+.modal-close {
+    cursor: url('../assets/images/Spamton_battle_static.png') 8 8, auto;
+}
+
+/* Red cursor on hover for clickable elements */
+button:hover,
+a:hover,
+input:hover,
+select:hover,
+textarea:hover,
+.day.clickable:hover,
+.modal-close:hover {
+    cursor: url('../assets/images/Spamton_battle_static_red.png') 16 16, auto;
+}
+
 body::before {
     content: "";
     position: fixed;

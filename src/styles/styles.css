@@ -10,26 +10,37 @@
 
 body {
     min-height: 100vh;
-    background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 25%, #1a472a 50%, #0f2d1a 100%);
+    background:
+        linear-gradient(135deg, #1a472a 0%, #2d5a3f 25%, #1a472a 50%, #0f2d1a 100%),
+        url('../assets/images/0737_Shiny_Charjabug.webp');
+    background-repeat: repeat;
+    background-size: 120px auto;
+    background-position: 0 0;
     background-attachment: fixed;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     padding: 20px;
     overflow-x: hidden;
+    border: 8px solid #ffd700;
+    border-radius: 32px;
+    box-shadow: 0 0 40px 10px #ffd70080;
+    box-sizing: border-box;
 }
 
-/* Snowflake Animation */
-.snowflakes {
+body::before {
+    content: "";
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    min-height: 100vh;
+    background: url('../assets/images/0737_Shiny_Charjabug.webp') repeat;
+    background-size: 120px auto;
+    opacity: 0.7;
     pointer-events: none;
-    z-index: 1000;
-    overflow: hidden;
+    z-index: 0;
 }
 
 .snowflake {
@@ -76,19 +87,34 @@ body {
     z-index: 1;
     max-width: 800px;
     width: 100%;
+    margin-top: 40px; /* Move container down from the top */
 }
 
-/* Title Styling */
 .title {
     text-align: center;
+    margin-bottom: 4.5rem; /* More space below title */
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    font-weight: bold;
+    letter-spacing: 2px;
     color: #ffd700;
     font-size: 2.5rem;
     text-shadow: 
         2px 2px 4px rgba(0, 0, 0, 0.5),
         0 0 20px rgba(255, 215, 0, 0.3);
-    margin-bottom: 30px;
-    font-weight: bold;
-    letter-spacing: 2px;
+    position: relative;
+    padding: 0.5em 1em;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.25); /* subtle dark background */
+    box-shadow: 0 0 30px 5px rgba(255, 215, 0, 0.25); /* extra glow */
+}
+
+.container::before,
+.container::after {
+    z-index: 2; /* Add this line */
+}
+.title {
+    position: relative;
+    z-index: 1; /* Ensure this is lower than the decorations */
 }
 
 /* Calendar Container */
@@ -289,10 +315,10 @@ body {
 
 /* Christmas Decorations */
 .container::before {
-    content: '🎅';
+    content: '🎄';
     position: absolute;
     top: -20px;
-    left: 20px;
+    left: -10px;
     font-size: 3rem;
     animation: bounce 2s ease-in-out infinite;
 }
@@ -301,7 +327,7 @@ body {
     content: '🦌';
     position: absolute;
     top: -20px;
-    right: 20px;
+    right: -10px;
     font-size: 3rem;
     animation: bounce 2s ease-in-out infinite 0.5s;
 }

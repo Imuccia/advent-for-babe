@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=900, initial-scale=1.0">
+    <title>Advent Calendar Surprise</title>
+    <style>
+        h2 {
+            margin-top: 1.2rem;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-align: center;
+        }
+        .input-row {
+            display: flex;
+            gap: 0.7rem;
+            margin-bottom: 2.2rem;
+            margin-top: 0.5rem;
+            justify-content: center;
+        }
+        .hints-container {
+            margin-top: auto;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            max-width: 500px;
+        }
+        .hint-row {
+            margin-bottom: 1.1rem;
+        }
+        .blurred-img {
+            margin-bottom: 1.2rem;
+        }
+        .blurred-img {
+            max-width: 90vw;
+            max-height: 40vh;
+            width: auto;
+            height: auto;
+            display: block;
+            margin: 2rem auto 1rem auto;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        body {
+            background: #fffbe7;
+            color: #c41e3a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding: 0 1rem;
+        }
+        .input-row input, .input-row button {
+            font-size: 1.1rem;
+            padding: 0.4em 1em;
+            border-radius: 8px;
+            border: none;
+            background: #c41e3a;
+            color: #fffbe7;
+            cursor: pointer;
+        }
+        .hint-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .hint-row .hint-text {
+            margin-left: 1em;
+            color: #1a472a;
+            font-size: 1.1rem;
+            display: none;
+        }
+        .hint-row .hint-text.visible {
+            display: inline;
+        }
+        .speaker {
+            margin-left: 1em;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #c41e3a;
+            transition: color 0.2s;
+        }
+        .speaker:hover {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Blurred image at the top -->
+    <img src="./assets/images/Sukuna_29.webp" alt="Blurred" class="blurred-img">
+
+    <!-- Title text -->
+    <h2>WHO DIS OwO</h2>
+
+    <!-- Text input and button -->
+    <div class="input-row">
+        <input type="text" id="answerInput" placeholder="Type your answer...">
+        <button id="sendBtn">Send</button>
+    </div>
+
+    <!-- Hint #1
+    <div class="hint-row">
+        <button id="hint1Btn">Hint #1</button>
+        <span class="hint-text" id="hint1Text">This is your first hint! 🎄</span>
+    </div> -->
+
+    <!-- Hint #2 with speaker icon -->
+        <div class="hint-row">
+            <button id="hint1Btn">
+                <span>Hint #1</span>
+                <span style="margin-left:0.5em; font-size:1.3em; vertical-align:middle;">📝</span>
+            </button>
+            <span class="hint-text" id="hint1Text">This is your first hint! 🎄</span>
+        </div>
+        <div class="hint-row">
+            <button id="audioBtn" class="audio-btn" style="display:inline-flex; align-items:center;">
+                <span>Hint #2</span>
+                <span class="speaker" title="Play audio" style="margin-left:0.5em; font-size:1.5em;">🔊</span>
+            </button>
+            <audio id="hintAudio" src="./assets/audio/hint2.mp3"></audio>
+        </div>
+
+    <script>
+        // Hint #1 reveal
+        document.getElementById('hint1Btn').onclick = function() {
+            document.getElementById('hint1Text').classList.add('visible');
+        };
+            // Hint #1 button reveals text
+            const hint1Btn = document.getElementById('hint1Btn');
+            const hint1Text = document.getElementById('hint1Text');
+            const audioBtn = document.getElementById('audioBtn');
+            const hintAudio = document.getElementById('hintAudio');
+
+            hint1Btn.onclick = function() {
+                hint1Text.classList.add('visible');
+            };
+            // Hint #2 button plays audio
+            audioBtn.onclick = function() {
+                hintAudio.play();
+            };
+            // Send button (example: alert the input)
+            document.getElementById('sendBtn').onclick = function() {
+                const val = document.getElementById('answerInput').value;
+                alert('You entered: ' + val);
+            };
+    </script>
+</body>
+</html>

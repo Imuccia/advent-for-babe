@@ -1,3 +1,9 @@
+html, body {
+    overflow: hidden;
+    box-sizing: border-box;
+    width: 100vw;
+    height: 100vh;
+}
 /* ========================================
    Christmas Advent Calendar Styles
    ======================================== */

@@ -132,10 +132,10 @@
 <body>
     <div id="confetti" class="confetti"></div>
     <!-- Blurred image at the top -->
-    <img src="./assets/images/Sukuna_29.webp" alt="Blurred" class="blurred-img">
+    <img id="popupImg" src="" alt="Blurred" class="blurred-img">
 
     <!-- Title text -->
-    <h2>WHO DIS OwO</h2>
+    <h2 id="popupTitle"></h2>
 
     <!-- Text input and button -->
     <div class="input-row">
@@ -161,6 +161,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Read query params for img, answer, title
+            const params = new URLSearchParams(window.location.search);
+            const imgSrc = params.get('img') || './assets/images/Sukuna_29.webp';
+            const answer = params.get('answer') || 'sukuna';
+            const title = params.get('title') || 'WHO DIS OwO';
+            document.getElementById('popupImg').src = imgSrc;
+            document.getElementById('popupTitle').textContent = title;
             // Focus the answer input on load
             setTimeout(function() {
                 answerInput.focus();

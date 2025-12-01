@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=900, initial-scale=1.0">
     <title>Advent Calendar Surprise</title>
     <style>
+        html, body, button, input, a, .day, .clickable, .disabled {
+            cursor: url('./assets/images/Spamton_battle_static.png') 8 8, auto !important;
+        }
         /* Confetti styles */
         .confetti {
             position: fixed;
@@ -161,13 +164,17 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Read query params for img, answer, title
+            // Read query params for img, title, day
             const params = new URLSearchParams(window.location.search);
-            const imgSrc = params.get('img') || './assets/images/Sukuna_29.webp';
-            const answer = params.get('answer') || 'sukuna';
+            const day = params.get('day');
+            const imgSrc = params.get('img') || './assets/images/0737_Shiny_Charjabug.webp';
             const title = params.get('title') || 'WHO DIS OwO';
-            document.getElementById('popupImg').src = imgSrc;
+            const imgElem = document.getElementById('popupImg');
+            imgElem.src = imgSrc;
             document.getElementById('popupTitle').textContent = title;
+
+            // Extract correct answer from image filename (without extension)
+            const imgName = imgSrc.split('/').pop().split('.')[0].toLowerCase();
             // Focus the answer input on load
             setTimeout(function() {
                 answerInput.focus();
@@ -264,7 +271,7 @@
             }
 
             // Set the correct answer here (case-insensitive)
-            const correctAnswer = 'sukuna';
+            // correct answer is now imgName
 
             // Hint #1 button reveals text
             hint1Btn.onclick = function() {
@@ -277,12 +284,16 @@
             // Send button checks answer
             sendBtn.onclick = function() {
                 const val = answerInput.value.trim().toLowerCase();
-                // Accept if the answer contains the correct answer (case-insensitive)
-                if (val.includes(correctAnswer)) {
+                // Accept if the answer contains the image filename (case-insensitive)
+                if (val.includes(imgName)) {
                     blurredImg.classList.add('unblurred');
                     answerInput.disabled = true;
                     sendBtn.disabled = true;
                     launchConfetti();
+                    // Notify opener window that this day is solved
+                    if (window.opener && day) {
+                        window.opener.postMessage({ type: 'advent-day-solved', day: Number(day) }, '*');
+                    }
                 } else {
                     answerInput.value = '';
                     answerInput.placeholder = 'Try again!';

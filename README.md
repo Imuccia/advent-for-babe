@@ -17,7 +17,7 @@
 In `script.js`, you can toggle between debug and release mode:
 
 ```javascript
-const DEBUG_MODE = true; // Set to false for release
+const DEBUG_MODE = false; // Set to false for release
 ```
 
 - **Debug Mode (true)**: All days are clickable for testing
@@ -39,3 +39,5 @@ netlify deploy --prod
 ## Local Development
 
 Simply open `index.html` in a web browser to preview the calendar.
+
+spostare Eren al 9

@@ -1,20 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Day 10 Special Popup</title>
-    <style>
-        html, body, button, input, a {
-            cursor: url('../assets/images/Spamton_battle_static.png') 8 8, auto !important;
-        }
-        body { background: #fffbe7; color: #c41e3a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 2rem; }
-        h1 { font-size: 2.5rem; margin-bottom: 1.5rem; }
-        p { font-size: 1.3rem; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gazzetta Window</title>
+  <style>
+    body {
+      background: #f7f7f7;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .gazzetta {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(60,60,100,0.12);
+      padding: 2em 2.5em;
+      min-width: 320px;
+      max-width: 420px;
+      text-align: center;
+    }
+    .gazzetta-title {
+      font-size: 1.5em;
+      color: #e6007a;
+      margin-bottom: 1em;
+      font-weight: bold;
+    }
+    .gazzetta-content {
+      color: #333;
+      font-size: 1.1em;
+    }
+  </style>
 </head>
 <body>
-    <h1>🎁 Day 10 Special!</h1>
-    <p>This is a custom popup for day 10. You can put anything you want here: a riddle, a video, a special message, or a mini-game!</p>
-    <p>Happy Holidays! 🎄</p>
+  <div class="gazzetta">
+    <div class="gazzetta-title">Gazzetta dello Sport</div>
+    <div class="gazzetta-content">
+      <p>This is your Gazzetta window for December 10th!<br>
+      (Replace this with your actual Gazzetta content.)</p>
+    </div>
+  </div>
 </body>
 </html>

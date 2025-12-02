@@ -6,9 +6,8 @@
     <title>Advent Calendar Surprise</title>
     <style>
         html, body, button, input, a, .day, .clickable, .disabled {
-            cursor: url('./assets/images/Spamton_battle_static.png') 8 8, auto !important;
+            cursor: url('../assets/images/cursor/Spamton_battle_static.png') 8 8, auto !important;
         }
-        /* Confetti styles */
         .confetti {
             position: fixed;
             top: 0;
@@ -76,14 +75,14 @@
         }
         .blurred-img {
             max-width: 90vw;
-            max-height: 40vh;
-            width: auto;
-            height: auto;
+            max-height: 98vh;
             display: block;
-            filter: blur(20px);
-            margin: 2rem auto 1rem auto;
+            filter: blur(40px) brightness(0.9) contrast(0.9);
+            margin: 0 auto;
             border-radius: 16px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            object-fit: contain;
+            background: transparent;
         }
         body {
             background: #fffbe7;
@@ -141,37 +140,56 @@
     <h2 id="popupTitle"></h2>
 
     <!-- Text input and button -->
-    <div class="input-row">
+    <div class="input-row" id="inputRow">
         <input type="text" id="answerInput" placeholder="Type your answer...">
         <button id="sendBtn">Send</button>
     </div>
+    <!-- Mark as completed for special days -->
+    <div class="input-row" id="markCompletedRow" style="display:none; justify-content:center;">
+        <button id="markCompletedBtn">Mark as completed</button>
+    </div>
 
     <!-- Hint #2 with speaker icon -->
-        <div class="hint-row">
-            <button id="hint1Btn">
-                <span>Hint #1</span>
-                <span style="margin-left:0.5em; font-size:1.3em; vertical-align:middle;">📝</span>
-            </button>
-            <span class="hint-text" id="hint1Text">This is your first hint! 🎄</span>
-        </div>
-        <div class="hint-row">
-            <button id="audioBtn" class="audio-btn" style="display:inline-flex; align-items:center;">
-                <span>Hint #2</span>
-                <span class="speaker" title="Play audio" style="margin-left:0.5em; font-size:1.5em;">🔊</span>
-            </button>
-            <audio id="hintAudio" src="./assets/audio/hint2.mp3"></audio>
-        </div>
+    <div class="hint-row">
+        <button id="hint1Btn">
+            <span>Hint #1</span>
+            <span style="margin-left:0.5em; font-size:1.3em; vertical-align:middle;">🗣️</span>
+        </button>
+        <span class="hint-text" id="hint1Text"></span>
+    </div>
+    <div class="hint-row">
+        <button id="audioBtn" class="audio-btn" style="display:inline-flex; align-items:center;">
+            <span>Hint #2</span>
+            <span class="speaker" title="Play audio" style="margin-left:0.5em; font-size:1.5em;">🔊</span>
+        </button>
+        <audio id="hintAudio"></audio>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Read query params for img, title, day
+            // Read query params for img, title, day, blur, hint1
             const params = new URLSearchParams(window.location.search);
             const day = params.get('day');
-            const imgSrc = params.get('img') || './assets/images/0737_Shiny_Charjabug.webp';
+            let imgSrc = params.get('img');
             const title = params.get('title') || 'WHO DIS OwO';
+            const blurAmount = parseInt(params.get('blur')) || 30;
+            const hint1 = params.get('hint1') || '';
+            const answer = params.get('answer') || '';
+            // Robust image path resolution
+            if (!imgSrc) {
+                imgSrc = '../assets/images/0737_Shiny_Charjabug.webp';
+            } else if (imgSrc.startsWith('./assets/')) {
+                imgSrc = '..' + imgSrc.slice(1);
+            } else if (imgSrc.startsWith('assets/')) {
+                imgSrc = '../' + imgSrc;
+            } else if (!imgSrc.startsWith('..') && !imgSrc.startsWith('/')) {
+                imgSrc = '../assets/images/' + imgSrc;
+            }
             const imgElem = document.getElementById('popupImg');
             imgElem.src = imgSrc;
+            imgElem.style.filter = `blur(${blurAmount}px)`;
             document.getElementById('popupTitle').textContent = title;
+            document.getElementById('hint1Text').textContent = hint1;
 
             // Extract correct answer from image filename (without extension)
             const imgName = imgSrc.split('/').pop().split('.')[0].toLowerCase();
@@ -184,9 +202,43 @@
             const hint1Text = document.getElementById('hint1Text');
             const audioBtn = document.getElementById('audioBtn');
             const hintAudio = document.getElementById('hintAudio');
+            // Set audio src based on answer
+            if (answer) {
+                // Replace spaces with underscores for file naming if needed
+                const audioFile = `../assets/audio/${answer}.mp3`;
+                hintAudio.src = audioFile;
+            }
             const sendBtn = document.getElementById('sendBtn');
             const answerInput = document.getElementById('answerInput');
             const blurredImg = document.querySelector('.blurred-img');
+            // Show/hide input or mark-completed for special days
+            const inputRow = document.getElementById('inputRow');
+            const markCompletedRow = document.getElementById('markCompletedRow');
+            const markCompletedBtn = document.getElementById('markCompletedBtn');
+            if (!answer) {
+                // No answer: show mark as completed button
+                inputRow.style.display = 'none';
+                markCompletedRow.style.display = 'flex';
+                if (markCompletedBtn) {
+                    markCompletedBtn.onclick = function() {
+                        if (window.opener && day) {
+                            window.opener.postMessage({ type: 'advent-day-solved', day: Number(day) }, '*');
+                        }
+                        window.close();
+                    };
+                }
+            } else {
+                // Normal answer mode
+                inputRow.style.display = '';
+                markCompletedRow.style.display = 'none';
+            }
+            // Play audio when Hint #2 button is clicked
+            if (audioBtn && hintAudio) {
+                audioBtn.addEventListener('click', function () {
+                    hintAudio.currentTime = 0;
+                    hintAudio.play();
+                });
+            }
 
             // Allow pressing Enter to submit answer
             answerInput.addEventListener('keydown', function(e) {
@@ -266,12 +318,8 @@
                         sparkle.style.opacity = 0;
                     }, 10);
                 }
-                // Remove confetti after animation
                 setTimeout(() => { confettiContainer.innerHTML = ''; }, 2500);
             }
-
-            // Set the correct answer here (case-insensitive)
-            // correct answer is now imgName
 
             // Hint #1 button reveals text
             hint1Btn.onclick = function() {
@@ -284,13 +332,13 @@
             // Send button checks answer
             sendBtn.onclick = function() {
                 const val = answerInput.value.trim().toLowerCase();
-                // Accept if the answer contains the image filename (case-insensitive)
                 if (val.includes(imgName)) {
                     blurredImg.classList.add('unblurred');
+                    // Actually remove the blur filter
+                    blurredImg.style.filter = 'none';
                     answerInput.disabled = true;
                     sendBtn.disabled = true;
                     launchConfetti();
-                    // Notify opener window that this day is solved
                     if (window.opener && day) {
                         window.opener.postMessage({ type: 'advent-day-solved', day: Number(day) }, '*');
                     }

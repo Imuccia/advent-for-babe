@@ -1,8 +1,46 @@
+/* Remove the gift icon for special days */
+/* Special days: show a star in the same style/position as the gift */
+.day.special-game::before {
+    content: '⭐';
+    position: absolute;
+    font-size: 0.8rem;
+    top: 3px;
+    right: 5px;
+    opacity: 0.6;
+}
+/* Remove the gift icon for special days */
+.day.special-game.clickable::after,
+.day.special-game::after {
+    content: none !important;
+}
+
+/* Style for the star icon on special days */
 html, body {
     overflow: hidden;
     box-sizing: border-box;
     width: 100vw;
     height: 100vh;
+}
+
+/* Calendar day styles */
+.day {
+    width: 70px;
+    height: 70px;
+    background: #fffbe7;
+    border: 2px solid #c41e3a;
+    border-radius: 16px;
+    margin: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #c41e3a;
+    box-shadow: 0 2px 8px #c41e3a22;
+    transition: transform 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
 }
 /* ========================================
    Christmas Advent Calendar Styles
@@ -22,6 +60,31 @@ body {
     background-repeat: repeat;
     background-size: 120px auto;
     background-position: 0 0;
+
+/* Special game day highlight */
+.day.special-game {
+    background: linear-gradient(135deg, #fffbe7 60%, #ffd700 100%);
+    border: 2.5px solid #ffd700;
+    box-shadow: 0 0 16px 2px #ffd70088, 0 2px 8px #c41e3a22;
+    color: #b8860b;
+    animation: sparkle 1.2s infinite linear alternate;
+}
+/* Special game star icon in top right */
+/* Special game star icon in top right */
+.special-game-icon {
+    pointer-events: none;
+    filter: drop-shadow(0 0 2px #fffbe7) drop-shadow(0 0 4px #ffd700);
+    font-size: 1.1em !important;
+    position: absolute;
+    top: 6px !important;
+    right: 6px !important;
+    z-index: 2;
+    background: none;
+}
+@keyframes sparkle {
+    0% { box-shadow: 0 0 16px 2px #ffd70088, 0 2px 8px #c41e3a22; }
+    100% { box-shadow: 0 0 32px 8px #ffd700cc, 0 2px 8px #c41e3a22; }
+}
     background-attachment: fixed;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
@@ -43,7 +106,7 @@ select,
 textarea,
 .day,
 .modal-close {
-    cursor: url('../assets/images/Spamton_battle_static.png') 8 8, auto;
+    cursor: url('../assets/images/cursor/Spamton_battle_static.png') 8 8, auto;
 }
 
 /* Red cursor on hover for clickable elements */
@@ -54,7 +117,7 @@ select:hover,
 textarea:hover,
 .day.clickable:hover,
 .modal-close:hover {
-    cursor: url('../assets/images/Spamton_battle_static_red.png') 16 16, auto;
+    cursor: url('../assets/images/cursor/Spamton_battle_static_red.png') 16 16, auto;
 }
 
 body::before {
@@ -113,8 +176,11 @@ body::before {
 .container {
     position: relative;
     z-index: 1;
-    max-width: 800px;
-    width: 100%;
+    max-width: 1100px;
+    width: 98vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-top: 40px; /* Move container down from the top */
 }
 
@@ -148,27 +214,31 @@ body::before {
 /* Calendar Container */
 .calendar {
     background: linear-gradient(145deg, #c41e3a 0%, #8b0000 50%, #c41e3a 100%);
-    border-radius: 20px;
-    padding: 30px;
+    border-radius: 22px;
+    padding: 36px;
     box-shadow: 
-        0 10px 40px rgba(0, 0, 0, 0.4),
-        inset 0 2px 10px rgba(255, 255, 255, 0.1),
-        0 0 60px rgba(196, 30, 58, 0.3);
-    border: 4px solid #ffd700;
+        0 12px 48px rgba(0, 0, 0, 0.42),
+        inset 0 2px 12px rgba(255, 255, 255, 0.12),
+        0 0 70px rgba(196, 30, 58, 0.32);
+    border: 5px solid #ffd700;
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 15px;
+    gap: 16px;
+    max-width: 900px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Calendar Day Box */
 .day {
     aspect-ratio: 1;
     background: linear-gradient(145deg, #2d5a3f 0%, #1a472a 100%);
-    border-radius: 12px;
+    border-radius: 22px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.8rem;
+    font-size: 2.8rem;
     font-weight: bold;
     color: #ffd700;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -179,6 +249,8 @@ body::before {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    width: 110px;
+    height: 110px;
 }
 
 .day::before {
@@ -269,10 +341,10 @@ body::before {
 
 .modal-content {
     background: linear-gradient(145deg, #c41e3a 0%, #8b0000 100%);
-    border-radius: 20px;
-    padding: 40px;
-    max-width: 500px;
-    width: 90%;
+    border-radius: 11px;
+    font-size: 1.05rem;
+    width: 40px;
+    height: 40px;
     text-align: center;
     border: 4px solid #ffd700;
     box-shadow: 0 0 60px rgba(255, 215, 0, 0.3);

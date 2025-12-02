@@ -167,7 +167,7 @@ function runCalendar() {
                 markBtn.style.border = 'none';
                 markBtn.style.zIndex = 2;
                 markBtn.disabled = isDaySolved(day);
-                markBtn.title = isDaySolved(day) ? 'Already completed' : 'Manually mark this day as completed';
+                markBtn.title = 'Manually mark this day as completed';
                 markBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     markDaySolved(day);

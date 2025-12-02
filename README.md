@@ -40,4 +40,4 @@ netlify deploy --prod
 
 Simply open `index.html` in a web browser to preview the calendar.
 
-spostare Eren al 9
+repo must be public

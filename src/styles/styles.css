@@ -2,13 +2,15 @@
     .container {
         overflow-x: auto;
         overflow-y: auto;
-        max-height: 95vh;
+        max-height: 100vh;
+        padding-bottom: 80px;
     }
     .calendar {
         min-width: 600px;
         width: max-content;
         margin-left: 0;
         margin-right: 0;
+        padding-bottom: 40px;
     }
 }
 /* Remove the gift icon for special days */

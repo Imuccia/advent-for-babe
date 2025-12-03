@@ -1,6 +1,3 @@
-// ========================================
-// Christmas Advent Calendar Script
-// ========================================
 
 // Import dayConfigs
 const script = document.createElement('script');
@@ -15,13 +12,11 @@ if (RESET_PROGRESS_ON_LOAD) {
         .filter(key => key.startsWith('advent_day_'))
         .forEach(key => localStorage.removeItem(key));
 }
+
 function runCalendar() {
-    // Helper: check if a day is solved
     function isDaySolved(day) {
         return localStorage.getItem('advent_day_' + day + '_solved') === '1';
-// Debug mode: set to true to make all days clickable for testing
     }
-    // Helper: mark a day as solved
     function markDaySolved(day) {
         localStorage.setItem('advent_day_' + day + '_solved', '1');
     }
@@ -29,11 +24,22 @@ function runCalendar() {
     const startDay = 8;
     const endDay = 25;
     const dayConfigs = window.dayConfigs;
-    // Calculate number of days and rows
     const daysCount = endDay - startDay + 1;
     const daysPerRow = 6;
     const today = new Date();
-    const todayDay = today.getDate();
+    let todayDay = null;
+    if (today.getMonth() === 11) {
+        todayDay = today.getDate();
+    }
+    // DEBUG: Simulate a different 'today' (only affects December logic)
+    // Uncomment one of the following lines to simulate a different 'today':
+    // todayDay = 8; // Simulate 8th December
+    // todayDay = 9; // Simulate 9th December
+    // todayDay = 15; // Simulate 15th December
+    if (DEBUG_MODE) {
+        console.log(`[DEBUG] Today: ${today.toDateString()}, month: ${today.getMonth()} (11=Dec)`);
+        console.log(`[DEBUG] Simulated todayDay: ${todayDay}`);
+    }
     for (let i = 0; i < daysCount; i++) {
         const day = startDay + i;
         const dayElem = document.createElement('div');
@@ -46,13 +52,10 @@ function runCalendar() {
         }
         if (isSpecial) {
             dayElem.classList.add('special-game');
-            // Star icon is now handled by CSS ::before
         }
-        // Add checkmark button for all days
         dayElem.style.position = 'relative';
         const config = dayConfigs[day];
         const isTemplate = config && config.template;
-        // Small square button for check
         const markBtn = document.createElement('button');
         markBtn.className = 'manual-check-btn';
         markBtn.style.position = 'absolute';
@@ -66,7 +69,6 @@ function runCalendar() {
         markBtn.style.padding = '0';
         markBtn.style.zIndex = 3;
         markBtn.tabIndex = 0;
-        // Check icon inside the button
         let checkIcon = document.createElement('span');
         checkIcon.className = 'day-check-icon';
         checkIcon.innerHTML = '✔';
@@ -75,13 +77,11 @@ function runCalendar() {
         checkIcon.style.opacity = isDaySolved(day) ? '1' : '0';
         checkIcon.style.transition = 'opacity 0.2s';
         checkIcon.style.pointerEvents = 'none';
-        checkIcon.style.color = isDaySolved(day) ? '#fff' : '#388e3c'; // white when checked, green otherwise
+        checkIcon.style.color = isDaySolved(day) ? '#fff' : '#388e3c';
         checkIcon.style.textShadow = isDaySolved(day) ? '0 0 2px #388e3c, 0 0 6px #388e3c' : '0 0 2px #fff';
         markBtn.appendChild(checkIcon);
-        // Only special days are user-checkable
         if (isSpecial) {
             markBtn.style.cursor = 'pointer';
-            // Tooltip logic: create on hover, attach to body, position absolutely
             let tooltip = null;
             function showTooltip(e) {
                 if (tooltip) return;
@@ -100,7 +100,6 @@ function runCalendar() {
                 tooltip.style.zIndex = '99999';
                 tooltip.style.boxShadow = '0 4px 16px rgba(0,0,0,0.18)';
                 document.body.appendChild(tooltip);
-                // Position tooltip to the right of the button
                 const rect = markBtn.getBoundingClientRect();
                 tooltip.style.left = (rect.right + 8) + 'px';
                 tooltip.style.top = (rect.top - 2) + 'px';
@@ -119,14 +118,12 @@ function runCalendar() {
             markBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (isDaySolved(day)) {
-                    // Unmark as completed
                     localStorage.removeItem('advent_day_' + day + '_solved');
                     checkIcon.style.opacity = '0';
                     markBtn.style.background = 'rgba(255,255,255,0.7)';
                     checkIcon.style.color = '#388e3c';
                     checkIcon.style.textShadow = '0 0 2px #fff';
                 } else {
-                    // Mark as completed
                     markDaySolved(day);
                     checkIcon.style.opacity = '1';
                     markBtn.style.background = 'rgba(26,71,42,0.7)';
@@ -135,40 +132,45 @@ function runCalendar() {
                 }
             });
         } else {
-            // Template days: not clickable, no tooltip
             markBtn.disabled = true;
             markBtn.style.cursor = 'default';
         }
         dayElem.appendChild(markBtn);
-        // Debug mode: all days clickable; Release mode: only today clickable
         let isClickable = false;
         if (DEBUG_MODE) {
             isClickable = !!dayConfigs[day];
+            console.log(`[DEBUG] Day ${day}: DEBUG_MODE active, clickable = ${isClickable}`);
+        } else if (today.getMonth() === 11) {
+            isClickable = (todayDay && day <= todayDay) && !!dayConfigs[day];
+            if (todayDay) {
+                console.log(`[DEBUG] Day ${day}: December, todayDay=${todayDay}, clickable=${isClickable}`);
+            }
         } else {
-            isClickable = (day === todayDay) && !!dayConfigs[day];
+            isClickable = false;
+            console.log(`[DEBUG] Day ${day}: Not December, not clickable`);
         }
         if (isClickable) {
             dayElem.classList.add('clickable');
             dayElem.addEventListener('click', function() {
+                if (DEBUG_MODE) {
+                    console.log(`[DEBUG] Day ${day} clicked`);
+                }
                 const config = dayConfigs[day];
                 if (config.template) {
-                // Do not show any mark-completed button or text for template days
-                    // Dynamically size popup based on image size + content
                     const img = new window.Image();
                     img.src = config.img;
                     img.onload = function() {
                         const aspectRatio = img.naturalWidth / img.naturalHeight;
                         let winWidth, winHeight;
                         const availHeight = window.screen.availHeight - 40;
-                        const extraContentHeight = 320; // space for title, input, hints, etc.
-                        if (aspectRatio < 0.9) { // vertical image
+                        const extraContentHeight = 320;
+                        if (aspectRatio < 0.9) {
                             winWidth = Math.max(500, img.naturalWidth + 120);
                             winHeight = Math.min(Math.max(img.naturalHeight + extraContentHeight, 800), availHeight);
-                        } else { // square or horizontal
-                            winWidth = Math.max(img.naturalWidth + 180, 600); // larger min width
+                        } else {
+                            winWidth = Math.max(img.naturalWidth + 180, 600);
                             winHeight = Math.min(Math.max(img.naturalHeight + extraContentHeight, 600), availHeight);
                         }
-                        // Pass params for image, answer, day, and blur
                         const params = new URLSearchParams({
                             img: config.img,
                             answer: config.answer,
@@ -181,7 +183,6 @@ function runCalendar() {
                             '_blank',
                             `width=${winWidth},height=${winHeight}`
                         );
-                        // Listen for solved message from popup
                         window.addEventListener('message', function handler(e) {
                             if (e.data && e.data.type === 'advent-day-solved' && e.data.day === day) {
                                 markDaySolved(day);

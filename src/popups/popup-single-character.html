@@ -162,7 +162,7 @@
             <span>Hint #2</span>
             <span class="speaker" title="Play audio" style="margin-left:0.5em; font-size:1.5em;">🔊</span>
         </button>
-        <audio id="hintAudio"></audio>
+        <audio id="hintAudio" preload="auto"></audio>
     </div>
 
     <script>
@@ -207,6 +207,16 @@
                 // Replace spaces with underscores for file naming if needed
                 const audioFile = `../assets/audio/${answer}.mp3`;
                 hintAudio.src = audioFile;
+                // Prime audio context for first play
+                hintAudio.volume = 0;
+                hintAudio.play().then(() => {
+                    hintAudio.pause();
+                    hintAudio.currentTime = 0;
+                    hintAudio.volume = 1;
+                }).catch(() => {
+                    // Ignore errors if browser blocks auto-play
+                    hintAudio.volume = 1;
+                });
             }
             const sendBtn = document.getElementById('sendBtn');
             const answerInput = document.getElementById('answerInput');
@@ -235,8 +245,18 @@
             // Play audio when Hint #2 button is clicked
             if (audioBtn && hintAudio) {
                 audioBtn.addEventListener('click', function () {
+                    hintAudio.pause();
                     hintAudio.currentTime = 0;
-                    hintAudio.play();
+                    hintAudio.volume = 0;
+                    hintAudio.play().then(() => {
+                        hintAudio.pause();
+                        hintAudio.currentTime = 0;
+                        hintAudio.volume = 1;
+                        setTimeout(() => hintAudio.play(), 100);
+                    }).catch(() => {
+                        hintAudio.volume = 1;
+                        setTimeout(() => hintAudio.play(), 100);
+                    });
                 });
             }
 

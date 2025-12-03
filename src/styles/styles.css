@@ -1,6 +1,8 @@
 @media (max-width: 900px) {
     .container {
         overflow-x: auto;
+        overflow-y: auto;
+        max-height: 95vh;
     }
     .calendar {
         min-width: 600px;

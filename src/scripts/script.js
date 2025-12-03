@@ -152,28 +152,7 @@ function runCalendar() {
             dayElem.addEventListener('click', function() {
                 const config = dayConfigs[day];
                 if (config.template) {
-                // Add mark as completed button
-                const markBtn = document.createElement('button');
-                markBtn.textContent = isDaySolved(day) ? 'Completed' : 'Mark as completed';
-                markBtn.className = 'mark-completed-btn';
-                markBtn.style.position = 'absolute';
-                markBtn.style.bottom = '4px';
-                markBtn.style.right = '4px';
-                markBtn.style.fontSize = '0.7em';
-                markBtn.style.padding = '2px 8px';
-                markBtn.style.borderRadius = '8px';
-                markBtn.style.background = isDaySolved(day) ? '#1a472a' : '#ffd700';
-                markBtn.style.color = isDaySolved(day) ? '#fff' : '#c41e3a';
-                markBtn.style.border = 'none';
-                markBtn.style.zIndex = 2;
-                markBtn.disabled = isDaySolved(day);
-                markBtn.title = 'Manually mark this day as completed';
-                markBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    markDaySolved(day);
-                    window.location.reload();
-                });
-                dayElem.appendChild(markBtn);
+                // Do not show any mark-completed button or text for template days
                     // Dynamically size popup based on image size + content
                     const img = new window.Image();
                     img.src = config.img;

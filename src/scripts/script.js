@@ -35,7 +35,7 @@ function runCalendar() {
     // Uncomment one of the following lines to simulate a different 'today':
     // todayDay = 8; // Simulate 8th December
     // todayDay = 9; // Simulate 9th December
-    // todayDay = 15; // Simulate 15th December
+    todayDay = 15; // Simulate 15th December
     if (DEBUG_MODE) {
         console.log(`[DEBUG] Today: ${today.toDateString()}, month: ${today.getMonth()} (11=Dec)`);
         console.log(`[DEBUG] Simulated todayDay: ${todayDay}`);
@@ -69,6 +69,20 @@ function runCalendar() {
         markBtn.style.padding = '0';
         markBtn.style.zIndex = 3;
         markBtn.tabIndex = 0;
+        let isClickable = false;
+        if (DEBUG_MODE) {
+            isClickable = !!dayConfigs[day];
+            console.log(`[DEBUG] Day ${day}: DEBUG_MODE active, clickable = ${isClickable}`);
+        } else if (today.getMonth() === 11) {
+            isClickable = (todayDay && day <= todayDay) && !!dayConfigs[day];
+            if (todayDay) {
+                console.log(`[DEBUG] Day ${day}: December, todayDay=${todayDay}, clickable=${isClickable}`);
+            }
+        } else {
+            isClickable = false;
+            console.log(`[DEBUG] Day ${day}: Not December, not clickable`);
+        }
+
         let checkIcon = document.createElement('span');
         checkIcon.className = 'day-check-icon';
         checkIcon.innerHTML = '✔';
@@ -80,7 +94,8 @@ function runCalendar() {
         checkIcon.style.color = isDaySolved(day) ? '#fff' : '#388e3c';
         checkIcon.style.textShadow = isDaySolved(day) ? '0 0 2px #388e3c, 0 0 6px #388e3c' : '0 0 2px #fff';
         markBtn.appendChild(checkIcon);
-        if (isSpecial) {
+
+        if (isSpecial && isClickable) {
             markBtn.style.cursor = 'pointer';
             let tooltip = null;
             function showTooltip(e) {
@@ -136,19 +151,6 @@ function runCalendar() {
             markBtn.style.cursor = 'default';
         }
         dayElem.appendChild(markBtn);
-        let isClickable = false;
-        if (DEBUG_MODE) {
-            isClickable = !!dayConfigs[day];
-            console.log(`[DEBUG] Day ${day}: DEBUG_MODE active, clickable = ${isClickable}`);
-        } else if (today.getMonth() === 11) {
-            isClickable = (todayDay && day <= todayDay) && !!dayConfigs[day];
-            if (todayDay) {
-                console.log(`[DEBUG] Day ${day}: December, todayDay=${todayDay}, clickable=${isClickable}`);
-            }
-        } else {
-            isClickable = false;
-            console.log(`[DEBUG] Day ${day}: Not December, not clickable`);
-        }
         if (isClickable) {
             dayElem.classList.add('clickable');
             dayElem.addEventListener('click', function() {

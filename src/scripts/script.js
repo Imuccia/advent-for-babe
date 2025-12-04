@@ -35,7 +35,7 @@ function runCalendar() {
     // Uncomment one of the following lines to simulate a different 'today':
     // todayDay = 8; // Simulate 8th December
     // todayDay = 9; // Simulate 9th December
-    todayDay = 15; // Simulate 15th December
+    // todayDay = 15; // Simulate 15th December
     if (DEBUG_MODE) {
         console.log(`[DEBUG] Today: ${today.toDateString()}, month: ${today.getMonth()} (11=Dec)`);
         console.log(`[DEBUG] Simulated todayDay: ${todayDay}`);

@@ -36,7 +36,7 @@
     font-weight: bold;
     letter-spacing: 2px;
     color: #ffd700;
-    font-size: 2.5rem;
+    font-size: clamp(1.1rem, 4vw, 1.7rem);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3);
     padding: 0.5em 1em;
     border-radius: 16px;
@@ -192,16 +192,16 @@ html, body {
 
 /* Calendar day styles */
 .day {
-    width: 70px;
-    height: 70px;
+    width: clamp(38px, 7vw, 54px);
+    height: clamp(38px, 7vw, 54px);
     background: #fffbe7;
     border: 2px solid #c41e3a;
-    border-radius: 16px;
-    margin: 8px;
+    border-radius: 12px;
+    margin: clamp(4px, 1vw, 8px);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: clamp(1rem, 2vw, 1.3rem);
     font-weight: bold;
     color: #c41e3a;
     box-shadow: 0 2px 8px #c41e3a22;
@@ -385,7 +385,7 @@ body::before {
 .calendar {
     background: linear-gradient(145deg, #c41e3a 0%, #8b0000 50%, #c41e3a 100%);
     border-radius: 22px;
-    padding: 36px 36px 70px 36px;
+    padding: clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px) clamp(24px, 4vw, 40px) clamp(12px, 2vw, 24px);
     box-shadow: 
         0 12px 48px rgba(0, 0, 0, 0.42),
         inset 0 2px 12px rgba(255, 255, 255, 0.12),
@@ -393,7 +393,7 @@ body::before {
     border: 5px solid #ffd700;
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 16px;
+    gap: clamp(6px, 1vw, 10px);
     min-width: 600px;
     width: max-content;
     margin-left: auto;
@@ -405,7 +405,7 @@ body::before {
     width: fit-content;
     margin: 0 auto 22px auto;
     font-family: 'Pacifico', cursive, 'Segoe UI', Arial, sans-serif;
-    font-size: 1.7rem;
+    font-size: clamp(1rem, 2vw, 1.2rem);
     font-weight: bold;
     color: #c41e3a;
     background: linear-gradient(90deg, #ffe066 0%, #ffd700 60%, #fffbe7 100%);

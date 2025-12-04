@@ -91,8 +91,13 @@ function runCalendar() {
         checkIcon.style.opacity = isDaySolved(day) ? '1' : '0';
         checkIcon.style.transition = 'opacity 0.2s';
         checkIcon.style.pointerEvents = 'none';
-        checkIcon.style.color = isDaySolved(day) ? '#fff' : '#388e3c';
-        checkIcon.style.textShadow = isDaySolved(day) ? '0 0 2px #388e3c, 0 0 6px #388e3c' : '0 0 2px #fff';
+        if (isDaySolved(day)) {
+            checkIcon.style.color = '#fff';
+            checkIcon.style.textShadow = '0 0 2px #388e3c, 0 0 6px #388e3c';
+        } else {
+            checkIcon.style.color = '#388e3c';
+            checkIcon.style.textShadow = '0 0 2px #fff';
+        }
         markBtn.appendChild(checkIcon);
 
         if (isSpecial && isClickable) {

@@ -398,6 +398,7 @@ body::before {
     width: max-content;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 32px;
 }
 
 .calendar-label {

@@ -91,7 +91,8 @@
         }
         .complete-banner {
             display: none;
-            margin-top: 2.2rem;
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
             font-size: 1.5rem;
             color: #fffbe7;
             font-weight: bold;
@@ -103,6 +104,7 @@
             text-align: center;
             animation: popBanner 1.2s cubic-bezier(.4,1,.6,1);
         }
+
         @keyframes popBanner {
             0% { transform: scale(0.7); opacity: 0; }
             60% { transform: scale(1.1); opacity: 1; }
@@ -111,19 +113,21 @@
     </style>
 </head>
 <body>
-    <h2>🧩 REBUS !!! 🎉</h2>
+    <h2>🧩 REBUS !!! 😼</h2>
     <div class="rebus-table" id="rebusTable"></div>
-    <div class="complete-banner" id="completeBanner">All solved! 🎉</div>
+    <div class="complete-banner" id="completeBanner">BRAVIX !!! 🎉</div>
     <script>
-        // Example emoji rebus and answers
+        // Custom emoji rebus and answers
         const rebusList = [
-            { emoji: '🐛⚡', answer: 'charjabug' },
-            { emoji: '👑🦁', answer: 'lionking' },
-            { emoji: '🍕🐢', answer: 'pizzaturtle' }
+            { emoji: '🐍🗡️🩹', answer: 'iguro obanai' }, // Iguro Obanai: Snake + boy + bandage
+            { emoji: '🦁👑💰', answer: 'tywin lannister' }, // Tywin: Lion + crown + gold
+            { emoji: '🐦🌑', answer: 'tokoyami' },    // Tokoyami: Bird + darkness
+            { emoji: '⚰️🍃', answer: 'hashirama' }, // Hashirama: First Hokage, wood style
         ];
         const rebusTable = document.getElementById('rebusTable');
         const completeBanner = document.getElementById('completeBanner');
         let solved = Array(rebusList.length).fill(false);
+ 
         function checkCompletion() {
             if (solved.every(Boolean)) {
                 completeBanner.style.display = 'block';
@@ -133,6 +137,7 @@
                 }
             }
         }
+        const inputRefs = [];
         rebusList.forEach((item, idx) => {
             const row = document.createElement('div');
             row.className = 'rebus-row';
@@ -145,18 +150,34 @@
             input.className = 'rebus-input';
             input.type = 'text';
             input.placeholder = 'Your answer...';
+            inputRefs.push(input);
             const checkmark = document.createElement('span');
             checkmark.className = 'checkmark';
             checkmark.textContent = '✔';
-            input.addEventListener('input', function() {
-                if (input.value.trim().toLowerCase() === item.answer) {
-                    checkmark.classList.add('visible');
-                    solved[idx] = true;
-                    checkCompletion();
-                } else {
-                    checkmark.classList.remove('visible');
-                    solved[idx] = false;
-                    completeBanner.style.display = 'none';
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    const val = input.value.trim().toLowerCase();
+                    let correct = false;
+                    if (item.answer.includes(' ')) {
+                        // Accept either word for two-word answers
+                        const [first, second] = item.answer.split(' ');
+                        correct = (val === first || val === second || val === item.answer);
+                    } else {
+                        correct = (val === item.answer);
+                    }
+                    if (correct) {
+                        checkmark.classList.add('visible');
+                        solved[idx] = true;
+                        checkCompletion();
+                        // Focus next input if available
+                        if (inputRefs[idx + 1]) {
+                            setTimeout(() => inputRefs[idx + 1].focus(), 120);
+                        }
+                    } else {
+                        checkmark.classList.remove('visible');
+                        solved[idx] = false;
+                        completeBanner.style.display = 'none';
+                    }
                 }
             });
             inputCell.appendChild(input);

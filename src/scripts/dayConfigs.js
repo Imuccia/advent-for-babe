@@ -28,12 +28,15 @@ window.dayConfigs = {
     hint1: "Welcome, Trainer. I was looking forward to seeing you here one day. You… What did you see on your journey with Pokémon? What did you feel, meeting so many other Trainers like you? What has awoken in you? I want you to hit me with it all! Now, bring it!"
   },
   12: {
-    template: false,
-    custom: './popups/popup-11.html'
+    template: true,
+    img: './assets/images/L.png',
+    answer: 'L',
+    blur: 40,
+    hint1: "If you use your head, you won't get fat even if you eat sweets."
   },
   13: {
     template: false,
-    custom: './popups/popup-12.html'
+    custom: './popups/popup-emoji-rebus.html'
   },
   14: {
     template: true,

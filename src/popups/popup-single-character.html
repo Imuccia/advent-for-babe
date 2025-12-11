@@ -352,7 +352,10 @@
             // Send button checks answer
             sendBtn.onclick = function() {
                 const val = answerInput.value.trim().toLowerCase();
-                if (val.includes(imgName)) {
+                if (
+                    (day == 12 && val === "l") || // Only accept "l" for day 12
+                    (day != 12 && val.includes(imgName)))
+                {
                     blurredImg.classList.add('unblurred');
                     // Actually remove the blur filter
                     blurredImg.style.filter = 'none';

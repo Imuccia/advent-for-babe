@@ -245,18 +245,11 @@
             // Play audio when Hint #2 button is clicked
             if (audioBtn && hintAudio) {
                 audioBtn.addEventListener('click', function () {
-                    hintAudio.pause();
-                    hintAudio.currentTime = 0;
-                    hintAudio.volume = 0;
-                    hintAudio.play().then(() => {
+                    if (!hintAudio.paused && !hintAudio.ended) {
                         hintAudio.pause();
-                        hintAudio.currentTime = 0;
-                        hintAudio.volume = 1;
-                        setTimeout(() => hintAudio.play(), 100);
-                    }).catch(() => {
-                        hintAudio.volume = 1;
-                        setTimeout(() => hintAudio.play(), 100);
-                    });
+                    } else {
+                        hintAudio.play(); // Resume from current time
+                    }
                 });
             }
 
@@ -344,10 +337,6 @@
             // Hint #1 button reveals text
             hint1Btn.onclick = function() {
                 hint1Text.classList.add('visible');
-            };
-            // Hint #2 button plays audio
-            audioBtn.onclick = function() {
-                hintAudio.play();
             };
             // Send button checks answer
             sendBtn.onclick = function() {

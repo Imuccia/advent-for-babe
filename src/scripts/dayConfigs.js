@@ -40,10 +40,10 @@ window.dayConfigs = {
   },
   14: {
     template: true,
-    img: './assets/images/charjabug.webp',
-    answer: 'charjabug',
+    img: './assets/images/lovecraft.png',
+    answer: 'lovecraft',
     blur: 30,
-    hint1: "Placeholder day. Replace with actual content later."
+    hint1: "I'm afraid I don't know what insanity means. Is this what you call insanity?"
   },
   15: {
     template: true,

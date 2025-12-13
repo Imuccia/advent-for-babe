@@ -203,20 +203,27 @@
             const audioBtn = document.getElementById('audioBtn');
             const hintAudio = document.getElementById('hintAudio');
             // Set audio src based on answer
+            function isMobile() {
+                return /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+            }
             if (answer) {
                 // Replace spaces with underscores for file naming if needed
                 const audioFile = `../assets/audio/${answer}.mp3`;
                 hintAudio.src = audioFile;
-                // Prime audio context for first play
-                hintAudio.volume = 0;
-                hintAudio.play().then(() => {
-                    hintAudio.pause();
-                    hintAudio.currentTime = 0;
+                if (!isMobile()) {
+                    // Prime audio context for first play (desktop only)
+                    hintAudio.volume = 0;
+                    hintAudio.play().then(() => {
+                        hintAudio.pause();
+                        hintAudio.currentTime = 0;
+                        hintAudio.volume = 1;
+                    }).catch(() => {
+                        // Ignore errors if browser blocks auto-play
+                        hintAudio.volume = 1;
+                    });
+                } else {
                     hintAudio.volume = 1;
-                }).catch(() => {
-                    // Ignore errors if browser blocks auto-play
-                    hintAudio.volume = 1;
-                });
+                }
             }
             const sendBtn = document.getElementById('sendBtn');
             const answerInput = document.getElementById('answerInput');
@@ -244,13 +251,23 @@
             }
             // Play audio when Hint #2 button is clicked
             if (audioBtn && hintAudio) {
-                audioBtn.addEventListener('click', function () {
-                    if (!hintAudio.paused && !hintAudio.ended) {
-                        hintAudio.pause();
-                    } else {
-                        hintAudio.play(); // Resume from current time
-                    }
-                });
+                if (isMobile()) {
+                    // Mobile: only allow play (no pause/resume toggle)
+                    audioBtn.addEventListener('click', function () {
+                        if (hintAudio.paused || hintAudio.ended) {
+                            hintAudio.play();
+                        }
+                    });
+                } else {
+                    // Desktop: allow play/pause toggle
+                    audioBtn.addEventListener('click', function () {
+                        if (!hintAudio.paused && !hintAudio.ended) {
+                            hintAudio.pause();
+                        } else {
+                            hintAudio.play(); // Resume from current time
+                        }
+                    });
+                }
             }
 
             // Allow pressing Enter to submit answer

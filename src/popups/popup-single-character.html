@@ -223,6 +223,7 @@
                     });
                 } else {
                     hintAudio.volume = 1;
+                    hintAudio.load(); // Ensure audio is loaded on mobile
                 }
             }
             const sendBtn = document.getElementById('sendBtn');

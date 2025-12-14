@@ -47,10 +47,10 @@ window.dayConfigs = {
   },
   15: {
     template: true,
-    img: './assets/images/charjabug.webp',
-    answer: 'charjabug',
+    img: './assets/images/gaara.png',
+    answer: 'gaara',
     blur: 30,
-    hint1: "Placeholder day. Replace with actual content later."
+    hint1: "One day I'd like to become something precious to others."
   },
   16: {
     template: true,

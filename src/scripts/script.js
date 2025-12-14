@@ -4,7 +4,7 @@ const script = document.createElement('script');
 script.src = './scripts/dayConfigs.js';
 document.head.appendChild(script);
 
-const DEBUG_MODE = false; // Set to false for release
+const DEBUG_MODE = true; // Set to false for release
 const RESET_PROGRESS_ON_LOAD = false; // Set to true to clear progress on reload
 
 if (RESET_PROGRESS_ON_LOAD) {

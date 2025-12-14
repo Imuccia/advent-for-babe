@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=900, initial-scale=1.0">
+    <title>Silhouette Guessing Game</title>
+    <style>
+        body {
+            background: #fffbe7;
+            color: #c41e3a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding: 0 1rem;
+        }
+        .carousel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 420px;
+            margin: 2rem auto 0 auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+            padding: 2rem 1.5rem 2.5rem 1.5rem;
+        }
+        .silhouette-img {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            margin-bottom: 1.2rem;
+            filter: brightness(0) contrast(1.2);
+            background: #eee;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .carousel-controls {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 1.2rem;
+        }
+        .carousel-btn {
+            background: #c41e3a;
+            color: #fffbe7;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            padding: 0.5em 1.2em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .carousel-btn:disabled {
+            background: #e0aeb5;
+            cursor: not-allowed;
+        }
+        .input-row {
+            display: flex;
+            gap: 0.7rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        .input-row input {
+            font-size: 1.1rem;
+            padding: 0.4em 1em;
+            border-radius: 8px;
+            border: none;
+            background: #fffbe7;
+            color: #c41e3a;
+        }
+        .input-row button {
+            font-size: 1.1rem;
+            padding: 0.4em 1em;
+            border-radius: 8px;
+            border: none;
+            background: #c41e3a;
+            color: #fffbe7;
+            cursor: pointer;
+        }
+        .checkmark {
+            color: #1a472a;
+            font-size: 1.5rem;
+            margin-left: 0.5em;
+            vertical-align: middle;
+        }
+        .completion-banner {
+            background: #ffd700;
+            color: #c41e3a;
+            font-size: 1.3rem;
+            padding: 1.2em 1.5em;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel-container">
+        <div class="carousel-controls">
+            <button id="prevBtn" class="carousel-btn">⟨</button>
+            <span id="carouselIndex"></span>
+            <button id="nextBtn" class="carousel-btn">⟩</button>
+        </div>
+        <img id="silhouetteImg" class="silhouette-img" src="" alt="Silhouette">
+        <div class="input-row">
+            <input type="text" id="guessInput" placeholder="Guess the character...">
+            <button id="submitBtn">Guess</button>
+            <span id="checkmark" class="checkmark" style="display:none;">✔️</span>
+        </div>
+        <div id="completionBanner" class="completion-banner" style="display:none;">Congratulations! You solved all silhouettes!</div>
+    </div>
+    <script>
+        // Placeholder silhouettes data (Charjabug)
+        const silhouettes = [
+            { img: '../assets/images/0737_Shiny_Charjabug.webp', answer: 'charjabug' },
+            { img: '../assets/images/0737_Shiny_Charjabug.webp', answer: 'charjabug' },
+            { img: '../assets/images/0737_Shiny_Charjabug.webp', answer: 'charjabug' },
+            { img: '../assets/images/0737_Shiny_Charjabug.webp', answer: 'charjabug' }
+        ];
+        let current = 0;
+        const solved = Array(silhouettes.length).fill(false);
+
+        const silhouetteImg = document.getElementById('silhouetteImg');
+        const guessInput = document.getElementById('guessInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const checkmark = document.getElementById('checkmark');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const carouselIndex = document.getElementById('carouselIndex');
+        const completionBanner = document.getElementById('completionBanner');
+
+        function updateCarousel() {
+            silhouetteImg.src = silhouettes[current].img;
+            guessInput.value = '';
+            checkmark.style.display = solved[current] ? '' : 'none';
+            guessInput.disabled = solved[current];
+            submitBtn.disabled = solved[current];
+            prevBtn.disabled = current === 0;
+            nextBtn.disabled = current === silhouettes.length - 1;
+            carouselIndex.textContent = `${current + 1} / ${silhouettes.length}`;
+        }
+
+        prevBtn.onclick = function() {
+            if (current > 0) {
+                current--;
+                updateCarousel();
+            }
+        };
+        nextBtn.onclick = function() {
+            if (current < silhouettes.length - 1) {
+                current++;
+                updateCarousel();
+            }
+        };
+        submitBtn.onclick = function() {
+            const guess = guessInput.value.trim().toLowerCase();
+            if (guess === silhouettes[current].answer.toLowerCase()) {
+                solved[current] = true;
+                checkmark.style.display = '';
+                guessInput.disabled = true;
+                submitBtn.disabled = true;
+                // Check if all solved
+                if (solved.every(Boolean)) {
+                    completionBanner.style.display = '';
+                }
+            } else {
+                guessInput.value = '';
+                guessInput.placeholder = 'Try again!';
+            }
+        };
+        // Allow Enter key to submit
+        guessInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !submitBtn.disabled && !guessInput.disabled) {
+                submitBtn.click();
+            }
+        });
+        // Initialize
+        updateCarousel();
+    </script>
+</body>
+</html>

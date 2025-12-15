@@ -178,13 +178,8 @@ function runCalendar() {
                             winWidth = Math.max(img.naturalWidth + 180, 600);
                             winHeight = Math.min(Math.max(img.naturalHeight + extraContentHeight, 600), availHeight);
                         }
-                        const params = new URLSearchParams({
-                            img: config.img,
-                            answer: config.answer,
-                            day: day
-                        });
-                        if (config.blur) params.append('blur', config.blur);
-                        if (config.hint1) params.append('hint1', config.hint1);
+                        // Only pass the day number to the popup
+                        const params = new URLSearchParams({ day });
                         const popup = window.open(
                             `./popups/popup-single-character.html?${params.toString()}`,
                             '_blank',

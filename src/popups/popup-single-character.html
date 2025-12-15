@@ -167,32 +167,213 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Read query params for img, title, day, blur, hint1
-            const params = new URLSearchParams(window.location.search);
-            const day = params.get('day');
-            let imgSrc = params.get('img');
-            const title = params.get('title') || 'WHO DIS OwO';
-            const blurAmount = parseInt(params.get('blur')) || 30;
-            const hint1 = params.get('hint1') || '';
-            const answer = params.get('answer') || '';
-            // Robust image path resolution
-            if (!imgSrc) {
-                imgSrc = '../assets/images/0737_Shiny_Charjabug.webp';
-            } else if (imgSrc.startsWith('./assets/')) {
-                imgSrc = '..' + imgSrc.slice(1);
-            } else if (imgSrc.startsWith('assets/')) {
-                imgSrc = '../' + imgSrc;
-            } else if (!imgSrc.startsWith('..') && !imgSrc.startsWith('/')) {
-                imgSrc = '../assets/images/' + imgSrc;
+            // Ensure dayConfigs is loaded
+            function ensureDayConfigs(callback) {
+                if (window.dayConfigs) {
+                    callback();
+                } else {
+                    const script = document.createElement('script');
+                    script.src = '../scripts/dayConfigs.js';
+                    script.onload = () => callback();
+                    document.head.appendChild(script);
+                }
             }
-            const imgElem = document.getElementById('popupImg');
-            imgElem.src = imgSrc;
-            imgElem.style.filter = `blur(${blurAmount}px)`;
-            document.getElementById('popupTitle').textContent = title;
-            document.getElementById('hint1Text').textContent = hint1;
+            ensureDayConfigs(function() {
+                // Read query param for day only
+                const params = new URLSearchParams(window.location.search);
+                const day = params.get('day');
+                // Use window.dayConfigs to look up config
+                const config = window.dayConfigs && window.dayConfigs[day];
+                // Fallbacks if config missing
+                let imgSrc = config && config.img ? config.img : '../assets/images/0737_Shiny_Charjabug.webp';
+                // Normalize image path to always be relative to /src/assets/images from /src/popups
+                if (imgSrc.startsWith('./assets/')) {
+                    imgSrc = '..' + imgSrc.slice(1);
+                } else if (imgSrc.startsWith('assets/')) {
+                    imgSrc = '../' + imgSrc;
+                } else if (!imgSrc.startsWith('..') && !imgSrc.startsWith('/')) {
+                    imgSrc = '../assets/images/' + imgSrc;
+                }
+                const title = (config && config.title) || 'WHO DIS OwO';
+                const blurAmount = (config && config.blur) ? parseInt(config.blur) : 30;
+                const hint1 = (config && config.hint1) || '';
+                const answer = (config && config.answer) || '';
+                const imgElem = document.getElementById('popupImg');
+                imgElem.src = imgSrc;
+                imgElem.style.filter = `blur(${blurAmount}px)`;
+                document.getElementById('popupTitle').textContent = title;
+                document.getElementById('hint1Text').textContent = hint1;
 
-            // Extract correct answer from image filename (without extension)
-            const imgName = imgSrc.split('/').pop().split('.')[0].toLowerCase();
+                // Extract correct answer from image filename (without extension)
+                const imgName = imgSrc.split('/').pop().split('.')[0].toLowerCase();
+
+                // Focus the answer input on load
+                setTimeout(function() {
+                    answerInput.focus();
+                }, 50);
+                // Setup variables
+                const hint1Btn = document.getElementById('hint1Btn');
+                const hint1Text = document.getElementById('hint1Text');
+                const audioBtn = document.getElementById('audioBtn');
+                const hintAudio = document.getElementById('hintAudio');
+                // Set audio src based on answer
+                if (answer) {
+                    // Replace spaces with underscores for file naming if needed
+                    const audioFile = `../assets/audio/${answer}.mp3`;
+                    hintAudio.src = audioFile;
+                    // Prime audio context for first play (always)
+                    hintAudio.volume = 0;
+                    hintAudio.play().then(() => {
+                        hintAudio.pause();
+                        hintAudio.currentTime = 0;
+                        hintAudio.volume = 1;
+                    }).catch(() => {
+                        // Ignore errors if browser blocks auto-play
+                        hintAudio.volume = 1;
+                    });
+                }
+                const sendBtn = document.getElementById('sendBtn');
+                const answerInput = document.getElementById('answerInput');
+                const blurredImg = document.querySelector('.blurred-img');
+                // Show/hide input or mark-completed for special days
+                const inputRow = document.getElementById('inputRow');
+                const markCompletedRow = document.getElementById('markCompletedRow');
+                const markCompletedBtn = document.getElementById('markCompletedBtn');
+                if (!answer) {
+                    // No answer: show mark as completed button
+                    inputRow.style.display = 'none';
+                    markCompletedRow.style.display = 'flex';
+                    if (markCompletedBtn) {
+                        markCompletedBtn.onclick = function() {
+                            if (window.opener && day) {
+                                window.opener.postMessage({ type: 'advent-day-solved', day: Number(day) }, '*');
+                            }
+                            window.close();
+                        };
+                    }
+                } else {
+                    // Normal answer mode
+                    inputRow.style.display = '';
+                    markCompletedRow.style.display = 'none';
+                }
+                // Play audio when Hint #2 button is clicked
+                if (audioBtn && hintAudio) {
+                    audioBtn.addEventListener('click', function () {
+                        if (!hintAudio.paused && !hintAudio.ended) {
+                            hintAudio.pause();
+                        } else {
+                            hintAudio.play(); // Resume from current time
+                        }
+                    });
+                }
+
+                // Allow pressing Enter to submit answer
+                answerInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !sendBtn.disabled && !answerInput.disabled) {
+                        sendBtn.click();
+                    }
+                });
+
+                // Confetti animation
+                function launchConfetti() {
+                    // Gold, silver, red, green
+                    const confettiColors = [
+                        '#ffd700', // gold
+                        '#fffafa', // silver (snow white)
+                        '#c0c0c0', // silver
+                        '#c41e3a', // red
+                        '#1a472a'  // green
+                    ];
+                    const confettiContainer = document.getElementById('confetti');
+                    confettiContainer.innerHTML = '';
+                    const pieces = 60;
+                    const stars = 15;
+                    const sparkles = 30;
+                    // Rectangles and circles
+                    for (let i = 0; i < pieces; i++) {
+                        const conf = document.createElement('div');
+                        conf.className = 'confetti-piece';
+                        const shape = Math.random() > 0.5 ? 'circle' : 'rect';
+                        const color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                        const size = Math.random() * 10 + 10;
+                        conf.style.width = shape === 'circle' ? `${size}px` : `${size + 4}px`;
+                        conf.style.height = `${size}px`;
+                        conf.style.background = color;
+                        conf.style.borderRadius = shape === 'circle' ? '50%' : '3px';
+                        conf.style.left = Math.random() * 100 + 'vw';
+                        conf.style.top = '-20px';
+                        conf.style.boxShadow = `0 0 8px 2px ${color}55`;
+                        conf.style.transform = `rotate(${Math.random() * 360}deg)`;
+                        confettiContainer.appendChild(conf);
+                        setTimeout(() => {
+                            conf.style.transition = `top 2.1s cubic-bezier(.4,1,.6,1), left 2.1s linear, transform 2.1s linear, opacity 2.1s`;
+                            conf.style.top = 80 + 20 * Math.random() + 'vh';
+                            conf.style.left = (parseFloat(conf.style.left) + (Math.random() - 0.5) * 30) + 'vw';
+                            conf.style.transform = `rotate(${Math.random() * 720}deg)`;
+                            conf.style.opacity = 0.7 + 0.3 * Math.random();
+                        }, 10);
+                    }
+                    // Stars
+                    for (let i = 0; i < stars; i++) {
+                        const star = document.createElement('div');
+                        star.className = 'confetti-star';
+                        star.style.left = Math.random() * 100 + 'vw';
+                        star.style.top = '-20px';
+                        star.style.transform = `rotate(${Math.random() * 360}deg)`;
+                        star.innerHTML = `<svg viewBox="0 0 24 24"><polygon points="12,2 15,10 24,10 17,15 19,23 12,18 5,23 7,15 0,10 9,10" fill="${confettiColors[Math.floor(Math.random() * confettiColors.length)]}"/></svg>`;
+                        confettiContainer.appendChild(star);
+                        setTimeout(() => {
+                            star.style.transition = `top 2.3s cubic-bezier(.4,1,.6,1), left 2.3s linear, transform 2.3s linear, opacity 2.3s`;
+                            star.style.top = 80 + 20 * Math.random() + 'vh';
+                            star.style.left = (parseFloat(star.style.left) + (Math.random() - 0.5) * 30) + 'vw';
+                            star.style.transform = `rotate(${Math.random() * 720}deg)`;
+                            star.style.opacity = 0.8 + 0.2 * Math.random();
+                        }, 10);
+                    }
+                    // Sparkles
+                    for (let i = 0; i < sparkles; i++) {
+                        const sparkle = document.createElement('div');
+                        sparkle.className = 'confetti-sparkle';
+                        sparkle.style.left = Math.random() * 100 + 'vw';
+                        sparkle.style.top = '-10px';
+                        sparkle.style.opacity = 0.5 + 0.5 * Math.random();
+                        confettiContainer.appendChild(sparkle);
+                        setTimeout(() => {
+                            sparkle.style.transition = `top 1.7s cubic-bezier(.4,1,.6,1), left 1.7s linear, opacity 1.7s`;
+                            sparkle.style.top = 80 + 20 * Math.random() + 'vh';
+                            sparkle.style.left = (parseFloat(sparkle.style.left) + (Math.random() - 0.5) * 30) + 'vw';
+                            sparkle.style.opacity = 0;
+                        }, 10);
+                    }
+                    setTimeout(() => { confettiContainer.innerHTML = ''; }, 2500);
+                }
+
+                // Hint #1 button reveals text
+                hint1Btn.onclick = function() {
+                    hint1Text.classList.add('visible');
+                };
+                // Send button checks answer
+                sendBtn.onclick = function() {
+                    const val = answerInput.value.trim().toLowerCase();
+                    if (
+                        (day == 12 && val === "l") || // Only accept "l" for day 12
+                        (day != 12 && val.includes(imgName)))
+                    {
+                        blurredImg.classList.add('unblurred');
+                        // Actually remove the blur filter
+                        blurredImg.style.filter = 'none';
+                        answerInput.disabled = true;
+                        sendBtn.disabled = true;
+                        launchConfetti();
+                        if (window.opener && day) {
+                            window.opener.postMessage({ type: 'advent-day-solved', day: Number(day) }, '*');
+                        }
+                    } else {
+                        answerInput.value = '';
+                        answerInput.placeholder = 'Try again!';
+                    }
+                };
+            });
             // Focus the answer input on load
             setTimeout(function() {
                 answerInput.focus();

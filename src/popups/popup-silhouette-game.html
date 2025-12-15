@@ -5,6 +5,63 @@
     <meta name="viewport" content="width=900, initial-scale=1.0">
     <title>Silhouette Guessing Game</title>
     <style>
+        .popup-title {
+            font-family: 'Luckiest Guy', 'Comic Sans MS', cursive, sans-serif;
+            font-size: 2.3rem;
+            color: #fffbe7;
+            background: linear-gradient(90deg, #c41e3a 0%, #ffd700 100%);
+            border-radius: 16px;
+            padding: 0.5em 1.5em;
+            margin: 1.2rem auto 1.5rem auto;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+            text-align: center;
+            letter-spacing: 0.04em;
+            width: fit-content;
+            display: block;
+        }
+        .bravix-banner {
+            display: none;
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
+            font-size: 1.5rem;
+            color: #fffbe7;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ffd700 0%, #ffe066 100%);
+            border-radius: 16px;
+            padding: 1em 2em;
+            box-shadow: 0 6px 32px #ffd70088, 0 2px 12px #c41e3a22;
+            letter-spacing: 0.13em;
+            text-align: center;
+            font-family: 'Pacifico', 'Segoe UI', Arial, sans-serif;
+            animation: popBanner 1.2s cubic-bezier(.4,1,.6,1);
+        }
+
+        @keyframes popBanner {
+            0% { transform: scale(0.7); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+        <style>
+            h2 {
+                margin-top: 2.2rem;
+                margin-bottom: 2.2rem;
+                font-size: 2.5rem;
+                text-align: center;
+                font-family: 'Pacifico', 'Segoe UI', Arial, sans-serif;
+                font-weight: bold;
+                color: #fffbe7;
+                background: linear-gradient(90deg, #c41e3a 0%, #8b0000 100%);
+                padding: 0.32em 1.6em;
+                border-radius: 28px;
+                box-shadow: 0 6px 32px 0 #c41e3a44, 0 2px 12px #ffd70022;
+                letter-spacing: 0.13em;
+                user-select: none;
+                text-shadow: 0 4px 16px #ffd70088, 0 0 4px #c41e3a;
+                display: inline-block;
+            }
+        </style>
+    <style>
         body {
             background: #fffbe7;
             color: #c41e3a;
@@ -31,11 +88,11 @@
             padding: 2rem 1.5rem 2.5rem 1.5rem;
         }
         .silhouette-img {
-            width: 180px;
-            height: 180px;
+            width: 320px;
+            height: 320px;
             object-fit: contain;
             margin-bottom: 1.2rem;
-            filter: brightness(0) contrast(1.2);
+            /* filter removed to show image as-is */
             background: #eee;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -102,6 +159,7 @@
     </style>
 </head>
 <body>
+    <h2>🕵️‍♂️ Silhouettes !!! 👤</h2>
     <div class="carousel-container">
         <div class="carousel-controls">
             <button id="prevBtn" class="carousel-btn">⟨</button>
@@ -109,23 +167,28 @@
             <button id="nextBtn" class="carousel-btn">⟩</button>
         </div>
         <img id="silhouetteImg" class="silhouette-img" src="" alt="Silhouette">
+        <div id="imgErrorMsg" style="color:#c41e3a; font-weight:bold; display:none; margin-bottom:1em;">Image failed to load. Check the path and file.</div>
         <div class="input-row">
             <input type="text" id="guessInput" placeholder="Guess the character...">
             <button id="submitBtn">Guess</button>
             <span id="checkmark" class="checkmark" style="display:none;">✔️</span>
         </div>
-        <div id="completionBanner" class="completion-banner" style="display:none;">Congratulations! You solved all silhouettes!</div>
+        <div id="bravixBanner" class="bravix-banner">BRAVIX !!! 🎉</div>
     </div>
     <script>
         // Placeholder silhouettes data (Charjabug)
         const silhouettes = [
-            { img: '../assets/images/0737_Shiny_Charjabug.webp', answer: 'charjabug' },
-            { img: '../assets/images/0737_Shiny_Charjabug.webp', answer: 'charjabug' },
-            { img: '../assets/images/0737_Shiny_Charjabug.webp', answer: 'charjabug' },
-            { img: '../assets/images/0737_Shiny_Charjabug.webp', answer: 'charjabug' }
+            { img: '../assets/images/silhouettes/aizawa.png', answer: 'aizawa' },
+            { img: '../assets/images/silhouettes/gilbert nightray.png', answer: 'gilbert nightray' },
+            { img: '../assets/images/silhouettes/akashi seijuro.png', answer: 'akashi seijuro' },
+            { img: '../assets/images/silhouettes/haruki nakayama.png', answer: 'haruki nakayama' },
+            { img: '../assets/images/silhouettes/schneizel.png', answer: 'schneizel' },
+
         ];
         let current = 0;
+        // Track solved state and answers for this popup session
         const solved = Array(silhouettes.length).fill(false);
+        const solvedAnswers = Array(silhouettes.length).fill("");
 
         const silhouetteImg = document.getElementById('silhouetteImg');
         const guessInput = document.getElementById('guessInput');
@@ -136,15 +199,103 @@
         const carouselIndex = document.getElementById('carouselIndex');
         const completionBanner = document.getElementById('completionBanner');
 
+        // Cache for silhouette data URLs
+        const silhouetteCache = Array(silhouettes.length).fill(null);
+
+        function generateSilhouette(imgUrl, idx, callback) {
+            const img = new window.Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                for (let i = 0; i < data.length; i += 4) {
+                    // If alpha > 0, set to fully opaque black, else keep transparent
+                    if (data[i + 3] > 32) {
+                        data[i] = 0;     // R
+                        data[i + 1] = 0; // G
+                        data[i + 2] = 0; // B
+                        data[i + 3] = 255; // Fully opaque
+                    } else {
+                        // Transparent
+                        data[i + 3] = 0;
+                    }
+                }
+                ctx.putImageData(imageData, 0, 0);
+                const url = canvas.toDataURL();
+                silhouetteCache[idx] = url;
+                callback(url);
+            };
+            img.onerror = function() {
+                // fallback to original if error
+                callback(imgUrl);
+            };
+            img.src = imgUrl;
+        }
+
         function updateCarousel() {
-            silhouetteImg.src = silhouettes[current].img;
-            guessInput.value = '';
-            checkmark.style.display = solved[current] ? '' : 'none';
-            guessInput.disabled = solved[current];
-            submitBtn.disabled = solved[current];
+            silhouetteImg.onerror = function() {
+                document.getElementById('imgErrorMsg').style.display = 'block';
+                silhouetteImg.style.display = 'none';
+            };
+            silhouetteImg.onload = function() {
+                document.getElementById('imgErrorMsg').style.display = 'none';
+                silhouetteImg.style.display = '';
+            };
+            // Show original image if solved, otherwise silhouette
+            if (solved[current]) {
+                silhouetteImg.style.filter = 'none'; // Remove blur before setting src
+                silhouetteImg.src = silhouettes[current].img;
+                silhouetteImg.onload = function() {
+                    document.getElementById('imgErrorMsg').style.display = 'none';
+                    silhouetteImg.style.display = '';
+                    silhouetteImg.style.filter = 'none'; // Remove blur after load
+                };
+            } else if (silhouetteCache[current]) {
+                silhouetteImg.style.filter = 'blur(2.5px)'; // Set blur before setting src
+                silhouetteImg.src = silhouetteCache[current];
+                silhouetteImg.onload = function() {
+                    document.getElementById('imgErrorMsg').style.display = 'none';
+                    silhouetteImg.style.display = '';
+                    silhouetteImg.style.filter = 'blur(2.5px)'; // Set blur after load
+                };
+            } else {
+                generateSilhouette(silhouettes[current].img, current, function(url) {
+                    if (current === silhouettes.findIndex((_, i) => i === current)) {
+                        silhouetteImg.style.filter = 'blur(2.5px)'; // Set blur before setting src
+                        silhouetteImg.src = url;
+                        silhouetteImg.onload = function() {
+                            document.getElementById('imgErrorMsg').style.display = 'none';
+                            silhouetteImg.style.display = '';
+                            silhouetteImg.style.filter = 'blur(2.5px)'; // Set blur after load
+                        };
+                    }
+                });
+            }
+            if (solved[current]) {
+                guessInput.value = solvedAnswers[current];
+                guessInput.disabled = true;
+                submitBtn.disabled = true;
+                checkmark.style.display = '';
+            } else {
+                guessInput.value = '';
+                guessInput.disabled = false;
+                submitBtn.disabled = false;
+                checkmark.style.display = 'none';
+                // Focus the input field when switching to this tab
+                setTimeout(() => { guessInput.focus(); }, 0);
+            }
             prevBtn.disabled = current === 0;
             nextBtn.disabled = current === silhouettes.length - 1;
             carouselIndex.textContent = `${current + 1} / ${silhouettes.length}`;
+            // Hide BRAVIX banner if not all solved
+            if (!solved.every(Boolean)) {
+                document.getElementById('bravixBanner').style.display = 'none';
+            }
         }
 
         prevBtn.onclick = function() {
@@ -161,14 +312,36 @@
         };
         submitBtn.onclick = function() {
             const guess = guessInput.value.trim().toLowerCase();
-            if (guess === silhouettes[current].answer.toLowerCase()) {
+            const answer = silhouettes[current].answer.toLowerCase();
+            let correct = false;
+            if (answer.includes(' ')) {
+                const [first, second] = answer.split(' ');
+                correct = (guess === first || guess === second || guess === answer);
+            } else {
+                correct = (guess === answer);
+            }
+            if (correct) {
                 solved[current] = true;
+                solvedAnswers[current] = silhouettes[current].answer;
                 checkmark.style.display = '';
+                guessInput.value = silhouettes[current].answer;
                 guessInput.disabled = true;
                 submitBtn.disabled = true;
+                // Show original image now that it's solved
+                silhouetteImg.style.filter = 'none'; // Remove blur before setting src
+                silhouetteImg.src = silhouettes[current].img;
+                silhouetteImg.onload = function() {
+                    document.getElementById('imgErrorMsg').style.display = 'none';
+                    silhouetteImg.style.display = '';
+                    silhouetteImg.style.filter = 'none'; // Remove blur after load
+                };
                 // Check if all solved
                 if (solved.every(Boolean)) {
-                    completionBanner.style.display = '';
+                    document.getElementById('bravixBanner').style.display = 'block';
+                    // Mark day as solved in calendar
+                    if (window.opener && window.location.search.includes('day=14')) {
+                        window.opener.postMessage({ type: 'advent-day-solved', day: 14 }, '*');
+                    }
                 }
             } else {
                 guessInput.value = '';
@@ -181,6 +354,22 @@
                 submitBtn.click();
             }
         });
+        // Keyboard navigation for carousel
+        document.addEventListener('keydown', function(e) {
+            if (e.target === guessInput) return; // Don't interfere with typing in input
+            if (e.key === 'ArrowLeft') {
+                if (current > 0) {
+                    current--;
+                    updateCarousel();
+                }
+            } else if (e.key === 'ArrowRight') {
+                if (current < silhouettes.length - 1) {
+                    current++;
+                    updateCarousel();
+                }
+            }
+        });
+
         // Initialize
         updateCarousel();
     </script>

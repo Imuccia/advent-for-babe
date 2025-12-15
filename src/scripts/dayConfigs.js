@@ -53,11 +53,8 @@ window.dayConfigs = {
     hint1: "One day I'd like to become something precious to others."
   },
   16: {
-    template: true,
-    img: './assets/images/charjabug.webp',
-    answer: 'charjabug',
-    blur: 30,
-    hint1: "Placeholder day. Replace with actual content later."
+    template: false,
+    custom: './popups/popup-silhouette-game.html'
   },
   17: {
     template: true,

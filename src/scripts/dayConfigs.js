@@ -58,17 +58,17 @@ window.dayConfigs = {
   },
   17: {
     template: true,
-    img: './assets/images/charjabug.webp',
-    answer: 'charjabug',
+    img: './assets/images/kirigiri.png',
+    answer: 'kirigiri',
     blur: 30,
-    hint1: "Placeholder day. Replace with actual content later."
+    hint1: "Instead of seizing on one view point, the truth is uncovered by analyzing things from every angle."
   },
   18: {
     template: true,
-    img: './assets/images/charjabug.webp',
-    answer: 'charjabug',
+    img: './assets/images/alastor.png',
+    answer: 'alastor',
     blur: 30,
-    hint1: "Placeholder day. Replace with actual content later."
+    hint1: "Smile, my dear! You know, you're never fully dressed without one!"
   },
   19: {
     template: true,

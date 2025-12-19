@@ -78,36 +78,33 @@ window.dayConfigs = {
     template: true,
     img: './assets/images/ash lynx.png',
     answer: 'ash lynx',
-    blur: 30,
+    blur: 40,
     hint1: "If you ask me, the white house can go screw itself."
   },
   21: {
     template: true,
     img: './assets/images/chiaki.png',
     answer: 'chiaki',
-    blur: 30,
-    hint1: "Placeholder day. Replace with actual content later."
+    blur: 40,
+    hint1: "You don't have to worry. Believe in me...and cast your vote."
   },
   22: {
-    template: true,
-    img: './assets/images/charjabug.webp',
-    answer: 'charjabug',
-    blur: 30,
-    hint1: "Placeholder day. Replace with actual content later."
+    template: false,
+    custom: "https://connections.swellgarfo.com/game/-Ogsh2i66eJ8HeIg1otX"
   },
   23: {
     template: true,
-    img: './assets/images/charjabug.webp',
-    answer: 'charjabug',
-    blur: 30,
-    hint1: "Placeholder day. Replace with actual content later."
+    img: './assets/images/meruem.png',
+    answer: 'meruem',
+    blur: 50,
+    hint1: "I see now. This is why I was born. For this moment!"
   },
   24: {
     template: true,
-    img: './assets/images/charjabug.webp',
-    answer: 'charjabug',
+    img: './assets/images/lelouch.png',
+    answer: 'lelouch',
     blur: 30,
-    hint1: "Placeholder day. Replace with actual content later."
+    hint1: "When there is evil in this world that justice cannot defeat, would you taint your hands with evil to defeat evil? Or would you remain steadfast and righteous even if it means surrendering to evil?"
   },
   25: {
     template: true,

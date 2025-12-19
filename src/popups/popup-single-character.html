@@ -355,10 +355,19 @@
                 // Send button checks answer
                 sendBtn.onclick = function() {
                     const val = answerInput.value.trim().toLowerCase();
-                    if (
-                        (day == 12 && val === "l") || // Only accept "l" for day 12
-                        (day != 12 && val.includes(imgName)))
-                    {
+                    let correct = false;
+                    if (day == 12) {
+                        correct = (val === "l");
+                    } else if (answer && answer.includes(' ')) {
+                        // Accept either word or the full answer for two-word answers
+                        const [first, second] = answer.split(' ');
+                        correct = (val === first || val === second || val === answer);
+                    } else if (answer) {
+                        correct = (val === answer || val.includes(imgName));
+                    } else {
+                        correct = val.includes(imgName);
+                    }
+                    if (correct) {
                         blurredImg.classList.add('unblurred');
                         // Actually remove the blur filter
                         blurredImg.style.filter = 'none';

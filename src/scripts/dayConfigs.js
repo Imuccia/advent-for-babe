@@ -71,23 +71,20 @@ window.dayConfigs = {
     hint1: "Smile, my dear! You know, you're never fully dressed without one!"
   },
   19: {
-    template: true,
-    img: './assets/images/charjabug.webp',
-    answer: 'charjabug',
-    blur: 30,
-    hint1: "Placeholder day. Replace with actual content later."
+    template: false,
+    custom: './popups/popup-zoom-guess.html'
   },
   20: {
     template: true,
-    img: './assets/images/charjabug.webp',
-    answer: 'charjabug',
+    img: './assets/images/ash lynx.png',
+    answer: 'ash lynx',
     blur: 30,
-    hint1: "Placeholder day. Replace with actual content later."
+    hint1: "If you ask me, the white house can go screw itself."
   },
   21: {
     template: true,
-    img: './assets/images/charjabug.webp',
-    answer: 'charjabug',
+    img: './assets/images/chiaki.png',
+    answer: 'chiaki',
     blur: 30,
     hint1: "Placeholder day. Replace with actual content later."
   },

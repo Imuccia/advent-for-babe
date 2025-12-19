@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=900, initial-scale=1.0">
+    <title>Zoom Guessing Game</title>
+    <style>
+        body {
+            background: #fffbe7;
+            color: #c41e3a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding: 0 1rem;
+        }
+        .carousel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 420px;
+            margin: 2rem auto 0 auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+            padding: 2rem 1.5rem 2.5rem 1.5rem;
+        }
+        .zoom-img-wrapper {
+            width: 320px;
+            height: 320px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eee;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 1.2rem;
+        }
+        .zoom-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s cubic-bezier(.4,1,.6,1);
+        }
+        .carousel-controls {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 1.2rem;
+        }
+        .carousel-btn {
+            background: #c41e3a;
+            color: #fffbe7;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            padding: 0.5em 1.2em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .carousel-btn:disabled {
+            background: #e0aeb5;
+            cursor: not-allowed;
+        }
+        .input-row {
+            display: flex;
+            gap: 0.7rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        .input-row input {
+            font-size: 1.1rem;
+            padding: 0.4em 1em;
+            border-radius: 8px;
+            border: none;
+            background: #fffbe7;
+            color: #c41e3a;
+        }
+        .input-row button {
+            font-size: 1.1rem;
+            padding: 0.4em 1em;
+            border-radius: 8px;
+            border: none;
+            background: #c41e3a;
+            color: #fffbe7;
+            cursor: pointer;
+        }
+        .zoom-btn {
+            margin-bottom: 1.2rem;
+            background: #ffd700;
+            color: #c41e3a;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            padding: 0.4em 1.2em;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #ffd70033;
+        }
+        .checkmark {
+            color: #1a472a;
+            font-size: 1.5rem;
+            margin-left: 0.5em;
+            vertical-align: middle;
+        }
+        .bravix-banner {
+            display: none;
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
+            font-size: 1.5rem;
+            color: #fffbe7;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ffd700 0%, #ffe066 100%);
+            border-radius: 16px;
+            padding: 1em 2em;
+            box-shadow: 0 6px 32px #ffd70088, 0 2px 12px #c41e3a22;
+            letter-spacing: 0.13em;
+            text-align: center;
+            font-family: 'Pacifico', 'Segoe UI', Arial, sans-serif;
+            animation: popBanner 1.2s cubic-bezier(.4,1,.6,1);
+        }
+        @keyframes popBanner {
+            0% { transform: scale(0.7); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h2>🔍 ZOOMED IN !!! 👁️</h2>
+    <div class="carousel-container">
+        <div class="carousel-controls">
+            <button id="prevBtn" class="carousel-btn">⟨</button>
+            <span id="carouselIndex"></span>
+            <button id="nextBtn" class="carousel-btn">⟩</button>
+        </div>
+        <div class="zoom-img-wrapper">
+            <img id="zoomImg" class="zoom-img" src="" alt="Zoomed Character">
+        </div>
+        <button id="zoomOutBtn" class="zoom-btn">«CAN'T SEE SHIT» button</button>
+        <div class="input-row">
+            <input type="text" id="guessInput" placeholder="Guess the character...">
+            <button id="submitBtn">Guess</button>
+            <span id="checkmark" class="checkmark" style="display:none;">✔️</span>
+        </div>
+        <div id="bravixBanner" class="bravix-banner">BRAVIX !!! 🎉</div>
+    </div>
+    <script>
+        // Placeholder images and answers (use existing images)
+        const zooms = [
+            { img: '../assets/images/zoom/leone abbacchio.webp', answer: 'leone abbacchio', initialZoom: 9.5, transformOrigin: '35% 40%', currentZoom: 10.5 },
+            { img: '../assets/images/zoom/xerxes break.jpg', answer: 'xerxes break', initialZoom: 9.5, transformOrigin: '49% 18%', currentZoom: 10.5 },
+            { img: '../assets/images/zoom/rika.jpg', answer: 'capsi rika', initialZoom: 8.5, transformOrigin: '38% 50%', currentZoom: 15.5 },
+            { img: '../assets/images/zoom/elias ainsworth.webp', answer: 'elias ainsworth', initialZoom: 9, transformOrigin: '30% 20%', currentZoom: 9 },
+            { img: '../assets/images/zoom/sir nighteye.jpg', answer: 'sir nighteye', initialZoom: 9.5, transformOrigin: '50% 75%', currentZoom: 9.5 },
+        ];
+        let current = 0;
+        const solved = Array(zooms.length).fill(false);
+        const solvedAnswers = Array(zooms.length).fill("");
+        const minZoom = 1.0;
+        const zoomStep = 1.5;
+
+        const zoomImg = document.getElementById('zoomImg');
+        const guessInput = document.getElementById('guessInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const checkmark = document.getElementById('checkmark');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const carouselIndex = document.getElementById('carouselIndex');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+
+        function updateCarousel() {
+            zoomImg.src = zooms[current].img;
+            zoomImg.style.transformOrigin = zooms[current].transformOrigin || '50% 50%';
+            zoomImg.style.transform = `scale(${zooms[current].currentZoom})`;
+            if (solved[current]) {
+                guessInput.value = solvedAnswers[current];
+                guessInput.disabled = true;
+                submitBtn.disabled = true;
+                checkmark.style.display = '';
+                zoomImg.style.transform = 'scale(1)';
+                zoomImg.style.transformOrigin = '50% 50%';
+            } else {
+                guessInput.value = '';
+                guessInput.disabled = false;
+                submitBtn.disabled = false;
+                checkmark.style.display = 'none';
+            }
+            prevBtn.disabled = current === 0;
+            nextBtn.disabled = current === zooms.length - 1;
+            carouselIndex.textContent = `${current + 1} / ${zooms.length}`;
+            document.getElementById('bravixBanner').style.display = solved.every(Boolean) ? 'block' : 'none';
+            if (!solved[current]) setTimeout(() => guessInput.focus(), 0);
+        }
+
+        prevBtn.onclick = function() {
+            if (current > 0) {
+                current--;
+                updateCarousel();
+            }
+        };
+        nextBtn.onclick = function() {
+            if (current < zooms.length - 1) {
+                current++;
+                updateCarousel();
+            }
+        };
+        zoomOutBtn.onclick = function() {
+            if (zooms[current].currentZoom > minZoom) {
+                zooms[current].currentZoom = Math.max(minZoom, zooms[current].currentZoom - zoomStep);
+                updateCarousel();
+            }
+        };
+        submitBtn.onclick = function() {
+            const guess = guessInput.value.trim().toLowerCase();
+            const answer = zooms[current].answer.toLowerCase();
+            let correct = false;
+            if (answer.includes(' ')) {
+                // Accept either word as correct
+                const [word1, word2] = answer.split(' ');
+                if (guess === word1 || guess === word2) correct = true;
+            }
+            if (guess === answer) correct = true;
+            if (correct) {
+                solved[current] = true;
+                solvedAnswers[current] = zooms[current].answer;
+                checkmark.style.display = '';
+                guessInput.value = zooms[current].answer;
+                guessInput.disabled = true;
+                submitBtn.disabled = true;
+                zoomImg.style.transform = 'scale(1)';
+                zoomImg.style.transformOrigin = '50% 50%';
+                if (solved.every(Boolean)) {
+                    document.getElementById('bravixBanner').style.display = 'block';
+                    // Mark day as solved in calendar
+                    const params = new URLSearchParams(window.location.search);
+                    let day = 19;
+                    if (params.has('day')) {
+                        day = parseInt(params.get('day'), 10);
+                    }
+                    if (window.opener) {
+                        window.opener.postMessage({ type: 'advent-day-solved', day }, '*');
+                    }
+                }
+            } else {
+                guessInput.value = '';
+                guessInput.placeholder = 'Try again!';
+                if (zooms[current].currentZoom > minZoom) {
+                    zooms[current].currentZoom = Math.max(minZoom, zooms[current].currentZoom - zoomStep);
+                    updateCarousel();
+                }
+            }
+        };
+        document.addEventListener('keydown', function(e) {
+            // Always allow carousel navigation with arrows
+            if ((e.key === 'ArrowLeft' || e.key === 'Left') && !prevBtn.disabled) {
+                prevBtn.click();
+                setTimeout(() => guessInput.focus(), 0);
+                e.preventDefault();
+            } else if ((e.key === 'ArrowRight' || e.key === 'Right') && !nextBtn.disabled) {
+                nextBtn.click();
+                setTimeout(() => guessInput.focus(), 0);
+                e.preventDefault();
+            } else if (e.key === 'Enter' && document.activeElement === guessInput && !submitBtn.disabled && !guessInput.disabled) {
+                submitBtn.click();
+            }
+        });
+        updateCarousel();
+    </script>
+</body>
+</html>

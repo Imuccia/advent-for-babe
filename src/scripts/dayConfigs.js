@@ -107,10 +107,7 @@ window.dayConfigs = {
     hint1: "When there is evil in this world that justice cannot defeat, would you taint your hands with evil to defeat evil? Or would you remain steadfast and righteous even if it means surrendering to evil?"
   },
   25: {
-    template: true,
-    img: './assets/images/charjabug.webp',
-    answer: 'charjabug',
-    blur: 30,
-    hint1: "Placeholder day. Replace with actual content later."
+    template: false,
+    custom: './popups/popup-memory-game.html'
   }
 };

@@ -17,6 +17,7 @@ function runCalendar() {
     function isDaySolved(day) {
         return localStorage.getItem('advent_day_' + day + '_solved') === '1';
     }
+
     function markDaySolved(day) {
         localStorage.setItem('advent_day_' + day + '_solved', '1');
     }

@@ -12,8 +12,8 @@
 <div id="popup-memory-game" class="popup">
   <!-- Title and subtitle moved outside the glass container, centered above -->
   <div class="memory-header-outer">
-    <h2 class="memory-title">🧠 Memory Game !!! 🧠</h2>
-    <p class="memory-desc">✨ Autism required ✨<br><span class="memory-emoji">💚</span></p>
+    <h2 class="memory-title">🧠 BONUS: Memory Game !!! 🧠</h2>
+    <p class="memory-desc">✨ Last bit of brainpower required ✨<br><span class="memory-emoji">💚</span></p>
   </div>
   <div class="popup-content glass" style="position:relative; margin: 0 auto;">
     <span class="snowflake snowflake-tl">❄️</span>
@@ -23,10 +23,11 @@
     <div id="memory-game-board" class="memory-board"></div>
     <div id="memory-win" class="memory-win hide">
       <div class="win-content">
-        <span class="bravix">BRAVIX!</span>
+        <span class="bravix">BUON NATALEEEEE</span>
+        <span class="bravix">(ily)</span>
       </div>
     </div>
-    <button id="debug-reset-memory" style="display:none;margin-top:1em;">Reset Game (Debug)</button>
+    <!-- Debug button removed -->
   </div>
 </div>
 
@@ -60,7 +61,8 @@
 .memory-title {
   font-size: 2.4em;
   color: #b80000;
-  margin-bottom: 0.2em;
+  margin-bottom: 0em;
+  line-height: 1.05;
   letter-spacing: 1px;
   text-shadow: 0 2px 8px #fff7, 0 0 2px #b80000;
   text-align: center;
@@ -69,7 +71,8 @@
 .memory-desc {
   color: #4e5d6c;
   font-size: 1.15em;
-  margin-bottom: 1.2em;
+  margin-bottom: 0em;
+  line-height: 1.2;
   text-align: center;
   width: 100%;
 }
@@ -85,7 +88,7 @@
   width: 900px;
   max-width: 98vw;
   position: relative;
-  margin: 0 auto;
+  margin: 2.5em 0 2em 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -98,10 +101,11 @@ body, .memory-title, .memory-desc, .memory-btn {
 /* Festive board and card size */
 .memory-board {
   display: grid;
-  grid-template-columns: repeat(4, 190px);
+  grid-template-columns: repeat(4, 150px);
+  grid-auto-rows: 150px;
   gap: 36px;
   justify-content: center;
-  margin: 2.5em 0 2em 0;
+  margin: 1em 0 1em 0;
   position: relative;
   overflow: visible;
 }
@@ -215,7 +219,15 @@ body, .memory-title, .memory-desc, .memory-btn {
   text-shadow: 0 4px 24px #fff, 0 2px 8px #b8000033;
   display: block;
   margin: 0.5em 0;
-  animation: bravixPop 1s cubic-bezier(.4,2,.6,1);
+  animation: bravixPop 1s cubic-bezier(.4,2,.6,1), bravixFestive 2.5s linear infinite;
+}
+@keyframes bravixFestive {
+  0%   { color: #b80000; transform: scale(0.7) rotate(-2deg);}
+  20%  { color: #1bbf00; transform: scale(1.15) rotate(2deg);}
+  40%  { color: #f7d600; transform: scale(1.05) rotate(-2deg);}
+  60%  { color: #b80000; transform: scale(1.18) rotate(3deg);}
+  80%  { color: #1bbf00; transform: scale(1.08) rotate(-3deg);}
+  100% { color: #b80000; transform: scale(1) rotate(0deg);}
 }
 @keyframes bravixPop {
   0% { transform: scale(0.7); opacity: 0; }
@@ -227,18 +239,19 @@ body, .memory-title, .memory-desc, .memory-btn {
 </style>
 
 <script>
-// Set this to true to show the debug reset button
+// Set this to true to show the debug win button
 const DEBUG_MODE = true;
 
+// Debug button logic removed
+
 // Memory Game Logic - Festive Version
-// Use six existing images as placeholders (12 cards)
 const memoryImages = [
-  'sukuna', 'sukuna',
-  'rocco', 'rocco',
-  'meruem', 'meruem',
-  'lovecraft', 'lovecraft',
-  'lelouch', 'lelouch',
-  'gaara', 'gaara'
+  'N_1', 'N_1',
+  'N_2', 'N_2',
+  'N_3', 'N_3',
+  'N_4', 'N_4',
+  'N_5', 'N_5',
+  'N_6', 'N_6'
 ];
 
 function shuffle(array) {
@@ -262,7 +275,7 @@ function createMemoryBoard() {
     card.innerHTML = `
       <div class="memory-card-inner">
         <div class="memory-card-front"></div>
-        <div class="memory-card-back"><img src="../assets/images/${img}.png" alt="${img}"></div>
+        <div class="memory-card-back"><img src="../assets/images/memory/${img}.png" alt="${img}"></div>
       </div>
     `;
     card.addEventListener('click', onCardClick);

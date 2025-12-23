@@ -108,6 +108,6 @@ window.dayConfigs = {
   },
   25: {
     template: false,
-    custom: './popups/popup-memory-game.html'
+    custom: 'https://www.evangame.com/play/SG5OFhC-lv'
   }
 };

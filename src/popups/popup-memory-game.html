@@ -24,10 +24,11 @@
     <div id="memory-win" class="memory-win hide">
       <div class="win-content">
         <span class="bravix">BUON NATALEEEEE</span>
-        <span class="bravix">(ily)</span>
+        <img src="../assets/images/silly.jpg" alt="Silly" style="max-width: 320px; width: 100%; max-height: 390px; height: auto; border-radius: 18px; margin: 1.2em auto 0.5em auto; box-shadow: 0 2px 16px #b8000033; display: block;" />
+        <span class="bravix">(jumpscare) (ily)</span>
       </div>
     </div>
-    <!-- Debug button removed -->
+    <!-- <button id="debug-reset-memory" class="memory-btn" style="display:none; position:absolute; top:1em; right:1em; z-index:20;">Show Win (Debug)</button> -->
   </div>
 </div>
 
@@ -211,7 +212,7 @@ body, .memory-title, .memory-desc, .memory-btn {
 .memory-win.hide { display: none; }
 .win-content { text-align: center; }
 .bravix {
-  font-size: 4em;
+  font-size: 3em;
   color: #b80000;
   font-family: 'Quicksand', 'Nunito', Arial, sans-serif;
   font-weight: bold;
@@ -242,7 +243,7 @@ body, .memory-title, .memory-desc, .memory-btn {
 // Set this to true to show the debug win button
 const DEBUG_MODE = true;
 
-// Debug button logic removed
+// Debug button logic restored
 
 // Memory Game Logic - Festive Version
 const memoryImages = [

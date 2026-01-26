@@ -70,18 +70,10 @@ function runCalendar() {
         markBtn.style.padding = '0';
         markBtn.style.zIndex = 3;
         markBtn.tabIndex = 0;
-        let isClickable = false;
+        // Always allow days to be clickable if they have a config
+        let isClickable = !!dayConfigs[day];
         if (DEBUG_MODE) {
-            isClickable = !!dayConfigs[day];
             console.log(`[DEBUG] Day ${day}: DEBUG_MODE active, clickable = ${isClickable}`);
-        } else if (today.getMonth() === 11) {
-            isClickable = (todayDay && day <= todayDay) && !!dayConfigs[day];
-            if (todayDay) {
-                console.log(`[DEBUG] Day ${day}: December, todayDay=${todayDay}, clickable=${isClickable}`);
-            }
-        } else {
-            isClickable = false;
-            console.log(`[DEBUG] Day ${day}: Not December, not clickable`);
         }
 
         let checkIcon = document.createElement('span');
